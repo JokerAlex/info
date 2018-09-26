@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ylgzs.info.dao.GradeMapper" >
+  <resultMap id="BaseResultMap" type="org.ylgzs.info.pojo.Grade" >
+    <constructor >
+      <idArg column="grade_id" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="grade_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="grade_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    grade_id, grade_create_time, grade_update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from grade
+    where grade_id = #{gradeId,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from grade
+    where grade_id = #{gradeId,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="org.ylgzs.info.pojo.Grade" >
+    insert into grade (grade_id, grade_create_time, grade_update_time
+      )
+    values (#{gradeId,jdbcType=CHAR}, #{gradeCreateTime,jdbcType=TIMESTAMP}, #{gradeUpdateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.Grade" >
+    insert into grade
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="gradeId != null" >
+        grade_id,
+      </if>
+      <if test="gradeCreateTime != null" >
+        grade_create_time,
+      </if>
+      <if test="gradeUpdateTime != null" >
+        grade_update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="gradeId != null" >
+        #{gradeId,jdbcType=CHAR},
+      </if>
+      <if test="gradeCreateTime != null" >
+        #{gradeCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gradeUpdateTime != null" >
+        #{gradeUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.Grade" >
+    update grade
+    <set >
+      <if test="gradeCreateTime != null" >
+        grade_create_time = #{gradeCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gradeUpdateTime != null" >
+        grade_update_time = #{gradeUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where grade_id = #{gradeId,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.Grade" >
+    update grade
+    set grade_create_time = #{gradeCreateTime,jdbcType=TIMESTAMP},
+      grade_update_time = #{gradeUpdateTime,jdbcType=TIMESTAMP}
+    where grade_id = #{gradeId,jdbcType=CHAR}
+  </update>
+</mapper>

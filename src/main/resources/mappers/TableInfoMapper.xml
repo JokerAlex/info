@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ylgzs.info.dao.TableInfoMapper" >
+  <resultMap id="BaseResultMap" type="org.ylgzs.info.pojo.TableInfo" >
+    <constructor >
+      <idArg column="table_info_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <idArg column="user_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="table_info_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="table_info_description" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="table_info_query_col" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="table_info_pv" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="table_info_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="table_info_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    table_info_id, user_user_id, table_info_name, table_info_description, table_info_query_col, 
+    table_info_pv, table_info_create_time, table_info_update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="org.ylgzs.info.pojo.TableInfoKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from table_info
+    where table_info_id = #{tableInfoId,jdbcType=INTEGER}
+      and user_user_id = #{userUserId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="org.ylgzs.info.pojo.TableInfoKey" >
+    delete from table_info
+    where table_info_id = #{tableInfoId,jdbcType=INTEGER}
+      and user_user_id = #{userUserId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.ylgzs.info.pojo.TableInfo" >
+    insert into table_info (table_info_id, user_user_id, table_info_name, 
+      table_info_description, table_info_query_col, 
+      table_info_pv, table_info_create_time, table_info_update_time
+      )
+    values (#{tableInfoId,jdbcType=INTEGER}, #{userUserId,jdbcType=INTEGER}, #{tableInfoName,jdbcType=VARCHAR}, 
+      #{tableInfoDescription,jdbcType=VARCHAR}, #{tableInfoQueryCol,jdbcType=VARCHAR}, 
+      #{tableInfoPv,jdbcType=INTEGER}, #{tableInfoCreateTime,jdbcType=TIMESTAMP}, #{tableInfoUpdateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.TableInfo" >
+    insert into table_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tableInfoId != null" >
+        table_info_id,
+      </if>
+      <if test="userUserId != null" >
+        user_user_id,
+      </if>
+      <if test="tableInfoName != null" >
+        table_info_name,
+      </if>
+      <if test="tableInfoDescription != null" >
+        table_info_description,
+      </if>
+      <if test="tableInfoQueryCol != null" >
+        table_info_query_col,
+      </if>
+      <if test="tableInfoPv != null" >
+        table_info_pv,
+      </if>
+      <if test="tableInfoCreateTime != null" >
+        table_info_create_time,
+      </if>
+      <if test="tableInfoUpdateTime != null" >
+        table_info_update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tableInfoId != null" >
+        #{tableInfoId,jdbcType=INTEGER},
+      </if>
+      <if test="userUserId != null" >
+        #{userUserId,jdbcType=INTEGER},
+      </if>
+      <if test="tableInfoName != null" >
+        #{tableInfoName,jdbcType=VARCHAR},
+      </if>
+      <if test="tableInfoDescription != null" >
+        #{tableInfoDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="tableInfoQueryCol != null" >
+        #{tableInfoQueryCol,jdbcType=VARCHAR},
+      </if>
+      <if test="tableInfoPv != null" >
+        #{tableInfoPv,jdbcType=INTEGER},
+      </if>
+      <if test="tableInfoCreateTime != null" >
+        #{tableInfoCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tableInfoUpdateTime != null" >
+        #{tableInfoUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.TableInfo" >
+    update table_info
+    <set >
+      <if test="tableInfoName != null" >
+        table_info_name = #{tableInfoName,jdbcType=VARCHAR},
+      </if>
+      <if test="tableInfoDescription != null" >
+        table_info_description = #{tableInfoDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="tableInfoQueryCol != null" >
+        table_info_query_col = #{tableInfoQueryCol,jdbcType=VARCHAR},
+      </if>
+      <if test="tableInfoPv != null" >
+        table_info_pv = #{tableInfoPv,jdbcType=INTEGER},
+      </if>
+      <if test="tableInfoCreateTime != null" >
+        table_info_create_time = #{tableInfoCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tableInfoUpdateTime != null" >
+        table_info_update_time = #{tableInfoUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where table_info_id = #{tableInfoId,jdbcType=INTEGER}
+      and user_user_id = #{userUserId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.TableInfo" >
+    update table_info
+    set table_info_name = #{tableInfoName,jdbcType=VARCHAR},
+      table_info_description = #{tableInfoDescription,jdbcType=VARCHAR},
+      table_info_query_col = #{tableInfoQueryCol,jdbcType=VARCHAR},
+      table_info_pv = #{tableInfoPv,jdbcType=INTEGER},
+      table_info_create_time = #{tableInfoCreateTime,jdbcType=TIMESTAMP},
+      table_info_update_time = #{tableInfoUpdateTime,jdbcType=TIMESTAMP}
+    where table_info_id = #{tableInfoId,jdbcType=INTEGER}
+      and user_user_id = #{userUserId,jdbcType=INTEGER}
+  </update>
+</mapper>
