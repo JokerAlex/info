@@ -6,14 +6,16 @@
       <idArg column="qrcode_record_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <idArg column="user_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="qrcode_record_code" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="qrcode_record_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="qrcode_record_description" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="qrcode_record_status" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="qrcode_record_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="qrcode_record_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    qrcode_record_id, user_user_id, qrcode_record_code, qrcode_record_status, qrcode_record_create_time, 
-    qrcode_record_update_time
+    qrcode_record_id, user_user_id, qrcode_record_code, qrcode_record_name, qrcode_record_description, 
+    qrcode_record_status, qrcode_record_create_time, qrcode_record_update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="org.ylgzs.info.pojo.QrCodeRecordKey" >
     select 
@@ -29,9 +31,11 @@
   </delete>
   <insert id="insert" parameterType="org.ylgzs.info.pojo.QrCodeRecord" >
     insert into qrcode_record (qrcode_record_id, user_user_id, qrcode_record_code, 
+      qrcode_record_name, qrcode_record_description, 
       qrcode_record_status, qrcode_record_create_time, 
       qrcode_record_update_time)
     values (#{qrcodeRecordId,jdbcType=INTEGER}, #{userUserId,jdbcType=INTEGER}, #{qrcodeRecordCode,jdbcType=VARCHAR}, 
+      #{qrcodeRecordName,jdbcType=VARCHAR}, #{qrcodeRecordDescription,jdbcType=VARCHAR}, 
       #{qrcodeRecordStatus,jdbcType=INTEGER}, #{qrcodeRecordCreateTime,jdbcType=TIMESTAMP}, 
       #{qrcodeRecordUpdateTime,jdbcType=TIMESTAMP})
   </insert>
@@ -46,6 +50,12 @@
       </if>
       <if test="qrcodeRecordCode != null" >
         qrcode_record_code,
+      </if>
+      <if test="qrcodeRecordName != null" >
+        qrcode_record_name,
+      </if>
+      <if test="qrcodeRecordDescription != null" >
+        qrcode_record_description,
       </if>
       <if test="qrcodeRecordStatus != null" >
         qrcode_record_status,
@@ -67,6 +77,12 @@
       <if test="qrcodeRecordCode != null" >
         #{qrcodeRecordCode,jdbcType=VARCHAR},
       </if>
+      <if test="qrcodeRecordName != null" >
+        #{qrcodeRecordName,jdbcType=VARCHAR},
+      </if>
+      <if test="qrcodeRecordDescription != null" >
+        #{qrcodeRecordDescription,jdbcType=VARCHAR},
+      </if>
       <if test="qrcodeRecordStatus != null" >
         #{qrcodeRecordStatus,jdbcType=INTEGER},
       </if>
@@ -84,6 +100,12 @@
       <if test="qrcodeRecordCode != null" >
         qrcode_record_code = #{qrcodeRecordCode,jdbcType=VARCHAR},
       </if>
+      <if test="qrcodeRecordName != null" >
+        qrcode_record_name = #{qrcodeRecordName,jdbcType=VARCHAR},
+      </if>
+      <if test="qrcodeRecordDescription != null" >
+        qrcode_record_description = #{qrcodeRecordDescription,jdbcType=VARCHAR},
+      </if>
       <if test="qrcodeRecordStatus != null" >
         qrcode_record_status = #{qrcodeRecordStatus,jdbcType=INTEGER},
       </if>
@@ -100,6 +122,8 @@
   <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.QrCodeRecord" >
     update qrcode_record
     set qrcode_record_code = #{qrcodeRecordCode,jdbcType=VARCHAR},
+      qrcode_record_name = #{qrcodeRecordName,jdbcType=VARCHAR},
+      qrcode_record_description = #{qrcodeRecordDescription,jdbcType=VARCHAR},
       qrcode_record_status = #{qrcodeRecordStatus,jdbcType=INTEGER},
       qrcode_record_create_time = #{qrcodeRecordCreateTime,jdbcType=TIMESTAMP},
       qrcode_record_update_time = #{qrcodeRecordUpdateTime,jdbcType=TIMESTAMP}

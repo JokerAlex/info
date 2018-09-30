@@ -9,15 +9,18 @@
       <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="user_email" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="user_email_confirm" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="department_department_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="grade_grade_id" jdbcType="CHAR" javaType="java.lang.String" />
       <arg column="user_role" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_info_open_id" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="user_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="user_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="grade_grade_id" jdbcType="CHAR" javaType="java.lang.String" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
     user_id, user_login_name, user_password, user_name, user_email, user_email_confirm, 
-    user_role, user_create_time, user_update_time, grade_grade_id
+    department_department_id, grade_grade_id, user_role, user_info_open_id, user_create_time, 
+    user_update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -32,12 +35,14 @@
   <insert id="insert" parameterType="org.ylgzs.info.pojo.UserInfo" >
     insert into user_info (user_id, user_login_name, user_password, 
       user_name, user_email, user_email_confirm, 
-      user_role, user_create_time, user_update_time, 
-      grade_grade_id)
+      department_department_id, grade_grade_id, user_role, 
+      user_info_open_id, user_create_time, user_update_time
+      )
     values (#{userId,jdbcType=INTEGER}, #{userLoginName,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR}, 
       #{userName,jdbcType=VARCHAR}, #{userEmail,jdbcType=VARCHAR}, #{userEmailConfirm,jdbcType=INTEGER}, 
-      #{userRole,jdbcType=INTEGER}, #{userCreateTime,jdbcType=TIMESTAMP}, #{userUpdateTime,jdbcType=TIMESTAMP}, 
-      #{gradeGradeId,jdbcType=CHAR})
+      #{departmentDepartmentId,jdbcType=INTEGER}, #{gradeGradeId,jdbcType=CHAR}, #{userRole,jdbcType=INTEGER}, 
+      #{userInfoOpenId,jdbcType=VARCHAR}, #{userCreateTime,jdbcType=TIMESTAMP}, #{userUpdateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.UserInfo" >
     insert into user_info
@@ -60,17 +65,23 @@
       <if test="userEmailConfirm != null" >
         user_email_confirm,
       </if>
+      <if test="departmentDepartmentId != null" >
+        department_department_id,
+      </if>
+      <if test="gradeGradeId != null" >
+        grade_grade_id,
+      </if>
       <if test="userRole != null" >
         user_role,
+      </if>
+      <if test="userInfoOpenId != null" >
+        user_info_open_id,
       </if>
       <if test="userCreateTime != null" >
         user_create_time,
       </if>
       <if test="userUpdateTime != null" >
         user_update_time,
-      </if>
-      <if test="gradeGradeId != null" >
-        grade_grade_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -92,17 +103,23 @@
       <if test="userEmailConfirm != null" >
         #{userEmailConfirm,jdbcType=INTEGER},
       </if>
+      <if test="departmentDepartmentId != null" >
+        #{departmentDepartmentId,jdbcType=INTEGER},
+      </if>
+      <if test="gradeGradeId != null" >
+        #{gradeGradeId,jdbcType=CHAR},
+      </if>
       <if test="userRole != null" >
         #{userRole,jdbcType=INTEGER},
+      </if>
+      <if test="userInfoOpenId != null" >
+        #{userInfoOpenId,jdbcType=VARCHAR},
       </if>
       <if test="userCreateTime != null" >
         #{userCreateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="userUpdateTime != null" >
         #{userUpdateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="gradeGradeId != null" >
-        #{gradeGradeId,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -124,17 +141,23 @@
       <if test="userEmailConfirm != null" >
         user_email_confirm = #{userEmailConfirm,jdbcType=INTEGER},
       </if>
+      <if test="departmentDepartmentId != null" >
+        department_department_id = #{departmentDepartmentId,jdbcType=INTEGER},
+      </if>
+      <if test="gradeGradeId != null" >
+        grade_grade_id = #{gradeGradeId,jdbcType=CHAR},
+      </if>
       <if test="userRole != null" >
         user_role = #{userRole,jdbcType=INTEGER},
+      </if>
+      <if test="userInfoOpenId != null" >
+        user_info_open_id = #{userInfoOpenId,jdbcType=VARCHAR},
       </if>
       <if test="userCreateTime != null" >
         user_create_time = #{userCreateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="userUpdateTime != null" >
         user_update_time = #{userUpdateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="gradeGradeId != null" >
-        grade_grade_id = #{gradeGradeId,jdbcType=CHAR},
       </if>
     </set>
     where user_id = #{userId,jdbcType=INTEGER}
@@ -146,10 +169,12 @@
       user_name = #{userName,jdbcType=VARCHAR},
       user_email = #{userEmail,jdbcType=VARCHAR},
       user_email_confirm = #{userEmailConfirm,jdbcType=INTEGER},
+      department_department_id = #{departmentDepartmentId,jdbcType=INTEGER},
+      grade_grade_id = #{gradeGradeId,jdbcType=CHAR},
       user_role = #{userRole,jdbcType=INTEGER},
+      user_info_open_id = #{userInfoOpenId,jdbcType=VARCHAR},
       user_create_time = #{userCreateTime,jdbcType=TIMESTAMP},
-      user_update_time = #{userUpdateTime,jdbcType=TIMESTAMP},
-      grade_grade_id = #{gradeGradeId,jdbcType=CHAR}
+      user_update_time = #{userUpdateTime,jdbcType=TIMESTAMP}
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
 </mapper>

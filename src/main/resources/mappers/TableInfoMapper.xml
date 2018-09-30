@@ -7,6 +7,7 @@
       <idArg column="user_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="table_info_name" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="table_info_description" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="table_info_cols" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="table_info_query_col" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="table_info_pv" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="table_info_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
@@ -14,8 +15,8 @@
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    table_info_id, user_user_id, table_info_name, table_info_description, table_info_query_col, 
-    table_info_pv, table_info_create_time, table_info_update_time
+    table_info_id, user_user_id, table_info_name, table_info_description, table_info_cols, 
+    table_info_query_col, table_info_pv, table_info_create_time, table_info_update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="org.ylgzs.info.pojo.TableInfoKey" >
     select 
@@ -31,11 +32,11 @@
   </delete>
   <insert id="insert" parameterType="org.ylgzs.info.pojo.TableInfo" >
     insert into table_info (table_info_id, user_user_id, table_info_name, 
-      table_info_description, table_info_query_col, 
+      table_info_description, table_info_cols, table_info_query_col, 
       table_info_pv, table_info_create_time, table_info_update_time
       )
     values (#{tableInfoId,jdbcType=INTEGER}, #{userUserId,jdbcType=INTEGER}, #{tableInfoName,jdbcType=VARCHAR}, 
-      #{tableInfoDescription,jdbcType=VARCHAR}, #{tableInfoQueryCol,jdbcType=VARCHAR}, 
+      #{tableInfoDescription,jdbcType=VARCHAR}, #{tableInfoCols,jdbcType=VARCHAR}, #{tableInfoQueryCol,jdbcType=VARCHAR}, 
       #{tableInfoPv,jdbcType=INTEGER}, #{tableInfoCreateTime,jdbcType=TIMESTAMP}, #{tableInfoUpdateTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -53,6 +54,9 @@
       </if>
       <if test="tableInfoDescription != null" >
         table_info_description,
+      </if>
+      <if test="tableInfoCols != null" >
+        table_info_cols,
       </if>
       <if test="tableInfoQueryCol != null" >
         table_info_query_col,
@@ -80,6 +84,9 @@
       <if test="tableInfoDescription != null" >
         #{tableInfoDescription,jdbcType=VARCHAR},
       </if>
+      <if test="tableInfoCols != null" >
+        #{tableInfoCols,jdbcType=VARCHAR},
+      </if>
       <if test="tableInfoQueryCol != null" >
         #{tableInfoQueryCol,jdbcType=VARCHAR},
       </if>
@@ -103,6 +110,9 @@
       <if test="tableInfoDescription != null" >
         table_info_description = #{tableInfoDescription,jdbcType=VARCHAR},
       </if>
+      <if test="tableInfoCols != null" >
+        table_info_cols = #{tableInfoCols,jdbcType=VARCHAR},
+      </if>
       <if test="tableInfoQueryCol != null" >
         table_info_query_col = #{tableInfoQueryCol,jdbcType=VARCHAR},
       </if>
@@ -123,6 +133,7 @@
     update table_info
     set table_info_name = #{tableInfoName,jdbcType=VARCHAR},
       table_info_description = #{tableInfoDescription,jdbcType=VARCHAR},
+      table_info_cols = #{tableInfoCols,jdbcType=VARCHAR},
       table_info_query_col = #{tableInfoQueryCol,jdbcType=VARCHAR},
       table_info_pv = #{tableInfoPv,jdbcType=INTEGER},
       table_info_create_time = #{tableInfoCreateTime,jdbcType=TIMESTAMP},

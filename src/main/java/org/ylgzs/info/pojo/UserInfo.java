@@ -15,25 +15,31 @@ public class UserInfo {
 
     private Integer userEmailConfirm;
 
+    private Integer departmentDepartmentId;
+
+    private String gradeGradeId;
+
     private Integer userRole;
+
+    private String userInfoOpenId;
 
     private Date userCreateTime;
 
     private Date userUpdateTime;
 
-    private String gradeGradeId;
-
-    public UserInfo(Integer userId, String userLoginName, String userPassword, String userName, String userEmail, Integer userEmailConfirm, Integer userRole, Date userCreateTime, Date userUpdateTime, String gradeGradeId) {
+    public UserInfo(Integer userId, String userLoginName, String userPassword, String userName, String userEmail, Integer userEmailConfirm, Integer departmentDepartmentId, String gradeGradeId, Integer userRole, String userInfoOpenId, Date userCreateTime, Date userUpdateTime) {
         this.userId = userId;
         this.userLoginName = userLoginName;
         this.userPassword = userPassword;
         this.userName = userName;
         this.userEmail = userEmail;
         this.userEmailConfirm = userEmailConfirm;
+        this.departmentDepartmentId = departmentDepartmentId;
+        this.gradeGradeId = gradeGradeId;
         this.userRole = userRole;
+        this.userInfoOpenId = userInfoOpenId;
         this.userCreateTime = userCreateTime;
         this.userUpdateTime = userUpdateTime;
-        this.gradeGradeId = gradeGradeId;
     }
 
     public UserInfo() {
@@ -88,12 +94,36 @@ public class UserInfo {
         this.userEmailConfirm = userEmailConfirm;
     }
 
+    public Integer getDepartmentDepartmentId() {
+        return departmentDepartmentId;
+    }
+
+    public void setDepartmentDepartmentId(Integer departmentDepartmentId) {
+        this.departmentDepartmentId = departmentDepartmentId;
+    }
+
+    public String getGradeGradeId() {
+        return gradeGradeId;
+    }
+
+    public void setGradeGradeId(String gradeGradeId) {
+        this.gradeGradeId = gradeGradeId == null ? null : gradeGradeId.trim();
+    }
+
     public Integer getUserRole() {
         return userRole;
     }
 
     public void setUserRole(Integer userRole) {
         this.userRole = userRole;
+    }
+
+    public String getUserInfoOpenId() {
+        return userInfoOpenId;
+    }
+
+    public void setUserInfoOpenId(String userInfoOpenId) {
+        this.userInfoOpenId = userInfoOpenId == null ? null : userInfoOpenId.trim();
     }
 
     public Date getUserCreateTime() {
@@ -110,13 +140,5 @@ public class UserInfo {
 
     public void setUserUpdateTime(Date userUpdateTime) {
         this.userUpdateTime = userUpdateTime;
-    }
-
-    public String getGradeGradeId() {
-        return gradeGradeId;
-    }
-
-    public void setGradeGradeId(String gradeGradeId) {
-        this.gradeGradeId = gradeGradeId == null ? null : gradeGradeId.trim();
     }
 }
