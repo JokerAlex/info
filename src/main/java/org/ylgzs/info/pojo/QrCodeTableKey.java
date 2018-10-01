@@ -1,5 +1,8 @@
 package org.ylgzs.info.pojo;
 
+import lombok.ToString;
+
+@ToString
 public class QrCodeTableKey {
     private Integer qrcodeId;
 

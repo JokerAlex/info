@@ -1,7 +1,10 @@
 package org.ylgzs.info.pojo;
 
+import lombok.ToString;
+
 import java.util.Date;
 
+@ToString
 public class Grade {
     private String gradeId;
 

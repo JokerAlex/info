@@ -1,7 +1,9 @@
 package org.ylgzs.info.pojo;
 
-import java.util.Date;
+import lombok.ToString;
 
+import java.util.Date;
+@ToString
 public class UserInfo {
     private Integer userId;
 

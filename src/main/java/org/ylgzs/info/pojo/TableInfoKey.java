@@ -1,5 +1,8 @@
 package org.ylgzs.info.pojo;
 
+import lombok.ToString;
+
+@ToString
 public class TableInfoKey {
     private Integer tableInfoId;
 
