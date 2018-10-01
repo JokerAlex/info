@@ -36,8 +36,8 @@
       qrcode_record_update_time)
     values (#{qrcodeRecordId,jdbcType=INTEGER}, #{userUserId,jdbcType=INTEGER}, #{qrcodeRecordCode,jdbcType=VARCHAR}, 
       #{qrcodeRecordName,jdbcType=VARCHAR}, #{qrcodeRecordDescription,jdbcType=VARCHAR}, 
-      #{qrcodeRecordStatus,jdbcType=INTEGER}, #{qrcodeRecordCreateTime,jdbcType=TIMESTAMP}, 
-      #{qrcodeRecordUpdateTime,jdbcType=TIMESTAMP})
+      #{qrcodeRecordStatus,jdbcType=INTEGER}, now(),
+      now())
   </insert>
   <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.QrCodeRecord" >
     insert into qrcode_record
@@ -60,12 +60,8 @@
       <if test="qrcodeRecordStatus != null" >
         qrcode_record_status,
       </if>
-      <if test="qrcodeRecordCreateTime != null" >
         qrcode_record_create_time,
-      </if>
-      <if test="qrcodeRecordUpdateTime != null" >
-        qrcode_record_update_time,
-      </if>
+        qrcode_record_update_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="qrcodeRecordId != null" >
@@ -86,12 +82,8 @@
       <if test="qrcodeRecordStatus != null" >
         #{qrcodeRecordStatus,jdbcType=INTEGER},
       </if>
-      <if test="qrcodeRecordCreateTime != null" >
-        #{qrcodeRecordCreateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="qrcodeRecordUpdateTime != null" >
-        #{qrcodeRecordUpdateTime,jdbcType=TIMESTAMP},
-      </if>
+      now(),
+      now()
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.QrCodeRecord" >
@@ -112,9 +104,7 @@
       <if test="qrcodeRecordCreateTime != null" >
         qrcode_record_create_time = #{qrcodeRecordCreateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="qrcodeRecordUpdateTime != null" >
-        qrcode_record_update_time = #{qrcodeRecordUpdateTime,jdbcType=TIMESTAMP},
-      </if>
+        qrcode_record_update_time = now()
     </set>
     where qrcode_record_id = #{qrcodeRecordId,jdbcType=INTEGER}
       and user_user_id = #{userUserId,jdbcType=INTEGER}
@@ -126,7 +116,7 @@
       qrcode_record_description = #{qrcodeRecordDescription,jdbcType=VARCHAR},
       qrcode_record_status = #{qrcodeRecordStatus,jdbcType=INTEGER},
       qrcode_record_create_time = #{qrcodeRecordCreateTime,jdbcType=TIMESTAMP},
-      qrcode_record_update_time = #{qrcodeRecordUpdateTime,jdbcType=TIMESTAMP}
+      qrcode_record_update_time = now()
     where qrcode_record_id = #{qrcodeRecordId,jdbcType=INTEGER}
       and user_user_id = #{userUserId,jdbcType=INTEGER}
   </update>

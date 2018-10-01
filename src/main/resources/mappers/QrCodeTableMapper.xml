@@ -29,7 +29,7 @@
     insert into qrcode_table (qrcode_id, table_id, table_status, 
       create_time, update_time)
     values (#{qrcodeId,jdbcType=INTEGER}, #{tableId,jdbcType=INTEGER}, #{tableStatus,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+      now(), now())
   </insert>
   <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.QrCodeTable" >
     insert into qrcode_table
@@ -43,12 +43,8 @@
       <if test="tableStatus != null" >
         table_status,
       </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
+        create_time
+        update_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="qrcodeId != null" >
@@ -60,12 +56,8 @@
       <if test="tableStatus != null" >
         #{tableStatus,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+      now(),
+      now()
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.QrCodeTable" >
@@ -77,9 +69,7 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+        update_time = now()
     </set>
     where qrcode_id = #{qrcodeId,jdbcType=INTEGER}
       and table_id = #{tableId,jdbcType=INTEGER}
@@ -88,7 +78,7 @@
     update qrcode_table
     set table_status = #{tableStatus,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where qrcode_id = #{qrcodeId,jdbcType=INTEGER}
       and table_id = #{tableId,jdbcType=INTEGER}
   </update>

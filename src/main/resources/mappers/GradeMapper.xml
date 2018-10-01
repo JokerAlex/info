@@ -24,7 +24,7 @@
   <insert id="insert" parameterType="org.ylgzs.info.pojo.Grade" >
     insert into grade (grade_id, grade_create_time, grade_update_time
       )
-    values (#{gradeId,jdbcType=CHAR}, #{gradeCreateTime,jdbcType=TIMESTAMP}, #{gradeUpdateTime,jdbcType=TIMESTAMP}
+    values (#{gradeId,jdbcType=CHAR}, now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.Grade" >
@@ -33,23 +33,15 @@
       <if test="gradeId != null" >
         grade_id,
       </if>
-      <if test="gradeCreateTime != null" >
         grade_create_time,
-      </if>
-      <if test="gradeUpdateTime != null" >
-        grade_update_time,
-      </if>
+        grade_update_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="gradeId != null" >
         #{gradeId,jdbcType=CHAR},
       </if>
-      <if test="gradeCreateTime != null" >
-        #{gradeCreateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="gradeUpdateTime != null" >
-        #{gradeUpdateTime,jdbcType=TIMESTAMP},
-      </if>
+      now(),
+      now()
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.Grade" >
@@ -58,16 +50,14 @@
       <if test="gradeCreateTime != null" >
         grade_create_time = #{gradeCreateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="gradeUpdateTime != null" >
-        grade_update_time = #{gradeUpdateTime,jdbcType=TIMESTAMP},
-      </if>
+        grade_update_time = now()
     </set>
     where grade_id = #{gradeId,jdbcType=CHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.Grade" >
     update grade
     set grade_create_time = #{gradeCreateTime,jdbcType=TIMESTAMP},
-      grade_update_time = #{gradeUpdateTime,jdbcType=TIMESTAMP}
+      grade_update_time = now()
     where grade_id = #{gradeId,jdbcType=CHAR}
   </update>
 </mapper>

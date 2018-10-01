@@ -37,7 +37,7 @@
       )
     values (#{tableInfoId,jdbcType=INTEGER}, #{userUserId,jdbcType=INTEGER}, #{tableInfoName,jdbcType=VARCHAR}, 
       #{tableInfoDescription,jdbcType=VARCHAR}, #{tableInfoCols,jdbcType=VARCHAR}, #{tableInfoQueryCol,jdbcType=VARCHAR}, 
-      #{tableInfoPv,jdbcType=INTEGER}, #{tableInfoCreateTime,jdbcType=TIMESTAMP}, #{tableInfoUpdateTime,jdbcType=TIMESTAMP}
+      #{tableInfoPv,jdbcType=INTEGER}, now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.TableInfo" >
@@ -64,12 +64,8 @@
       <if test="tableInfoPv != null" >
         table_info_pv,
       </if>
-      <if test="tableInfoCreateTime != null" >
-        table_info_create_time,
-      </if>
-      <if test="tableInfoUpdateTime != null" >
-        table_info_update_time,
-      </if>
+        table_info_create_time
+        table_info_update_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="tableInfoId != null" >
@@ -93,12 +89,8 @@
       <if test="tableInfoPv != null" >
         #{tableInfoPv,jdbcType=INTEGER},
       </if>
-      <if test="tableInfoCreateTime != null" >
-        #{tableInfoCreateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="tableInfoUpdateTime != null" >
-        #{tableInfoUpdateTime,jdbcType=TIMESTAMP},
-      </if>
+      now(),
+      now()
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.TableInfo" >
@@ -122,9 +114,7 @@
       <if test="tableInfoCreateTime != null" >
         table_info_create_time = #{tableInfoCreateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="tableInfoUpdateTime != null" >
-        table_info_update_time = #{tableInfoUpdateTime,jdbcType=TIMESTAMP},
-      </if>
+        table_info_update_time = now()
     </set>
     where table_info_id = #{tableInfoId,jdbcType=INTEGER}
       and user_user_id = #{userUserId,jdbcType=INTEGER}
@@ -137,7 +127,7 @@
       table_info_query_col = #{tableInfoQueryCol,jdbcType=VARCHAR},
       table_info_pv = #{tableInfoPv,jdbcType=INTEGER},
       table_info_create_time = #{tableInfoCreateTime,jdbcType=TIMESTAMP},
-      table_info_update_time = #{tableInfoUpdateTime,jdbcType=TIMESTAMP}
+      table_info_update_time = now()
     where table_info_id = #{tableInfoId,jdbcType=INTEGER}
       and user_user_id = #{userUserId,jdbcType=INTEGER}
   </update>
