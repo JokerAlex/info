@@ -1,7 +1,11 @@
 package org.ylgzs.info.dao;
 
+import org.springframework.stereotype.Repository;
 import org.ylgzs.info.pojo.Department;
 
+import java.util.List;
+
+@Repository
 public interface DepartmentMapper {
     int deleteByPrimaryKey(Integer departmentId);
 
@@ -14,4 +18,6 @@ public interface DepartmentMapper {
     int updateByPrimaryKeySelective(Department record);
 
     int updateByPrimaryKey(Department record);
+
+    List<Department> selectList();
 }

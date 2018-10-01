@@ -1,74 +1,79 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="org.ylgzs.info.dao.DepartmentMapper" >
-  <resultMap id="BaseResultMap" type="org.ylgzs.info.pojo.Department" >
-    <constructor >
-      <idArg column="department_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="department_name" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="department_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="department_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-    </constructor>
-  </resultMap>
-  <sql id="Base_Column_List" >
-    department_id, department_name, department_create_time, department_update_time
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from department
-    where department_id = #{departmentId,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from department
-    where department_id = #{departmentId,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="org.ylgzs.info.pojo.Department" >
-    insert into department (department_id, department_name, department_create_time, 
-      department_update_time)
-    values (#{departmentId,jdbcType=INTEGER}, #{departmentName,jdbcType=VARCHAR}, now(),
-      now())
-  </insert>
-  <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.Department" >
-    insert into department
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="departmentId != null" >
-        department_id,
-      </if>
-      <if test="departmentName != null" >
-        department_name,
-      </if>
-        department_create_time,
-        department_update_time
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="departmentId != null" >
-        #{departmentId,jdbcType=INTEGER},
-      </if>
-      <if test="departmentName != null" >
-        #{departmentName,jdbcType=VARCHAR},
-      </if>
-      now(),
-      now()
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.Department" >
-    update department
-    <set >
-      <if test="departmentName != null" >
-        department_name = #{departmentName,jdbcType=VARCHAR},
-      </if>
-      <if test="departmentCreateTime != null" >
-        department_create_time = #{departmentCreateTime,jdbcType=TIMESTAMP},
-      </if>
-        department_update_time = now()
-    </set>
-    where department_id = #{departmentId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.Department" >
-    update department
-    set department_name = #{departmentName,jdbcType=VARCHAR},
-      department_create_time = #{departmentCreateTime,jdbcType=TIMESTAMP},
-      department_update_time = now()
-    where department_id = #{departmentId,jdbcType=INTEGER}
-  </update>
+<mapper namespace="org.ylgzs.info.dao.DepartmentMapper">
+    <resultMap id="BaseResultMap" type="org.ylgzs.info.pojo.Department">
+        <constructor>
+            <idArg column="department_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="department_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="department_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="department_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        department_id, department_name, department_create_time, department_update_time
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from department
+        where department_id = #{departmentId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from department
+        where department_id = #{departmentId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="org.ylgzs.info.pojo.Department">
+        insert into department (department_id, department_name, department_create_time, department_update_time)
+        values (#{departmentId,jdbcType=INTEGER}, #{departmentName,jdbcType=VARCHAR}, now(), now())
+    </insert>
+    <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.Department">
+        insert into department
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="departmentId != null">
+                department_id,
+            </if>
+            <if test="departmentName != null">
+                department_name,
+            </if>
+            department_create_time,
+            department_update_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="departmentId != null">
+                #{departmentId,jdbcType=INTEGER},
+            </if>
+            <if test="departmentName != null">
+                #{departmentName,jdbcType=VARCHAR},
+            </if>
+            now(),
+            now()
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.Department">
+        update department
+        <set>
+            <if test="departmentName != null">
+                department_name = #{departmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentCreateTime != null">
+                department_create_time = #{departmentCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            department_update_time = now()
+        </set>
+        where department_id = #{departmentId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.Department">
+        update department
+        set department_name        = #{departmentName,jdbcType=VARCHAR},
+            department_create_time = #{departmentCreateTime,jdbcType=TIMESTAMP},
+            department_update_time = now()
+        where department_id = #{departmentId,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from department
+    </select>
 </mapper>
