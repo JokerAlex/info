@@ -5,6 +5,26 @@ spring:
     username: root
     password: 1234567890
 
+# mybatis 配置
+mybatis:
+  check-config-location: false
+  type-aliases-package: org.ylgzs.info.pojo
+  mapper-locations: classpath:mappers/*.xml
+
+
+# pagehelper
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: countSql
+
+
+
+
+
+
 
 pass:
   salt: 123456
+

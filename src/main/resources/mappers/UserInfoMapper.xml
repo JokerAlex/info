@@ -41,7 +41,7 @@
     values (#{userId,jdbcType=INTEGER}, #{userLoginName,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR}, 
       #{userName,jdbcType=VARCHAR}, #{userEmail,jdbcType=VARCHAR}, #{userEmailConfirm,jdbcType=INTEGER}, 
       #{departmentDepartmentId,jdbcType=INTEGER}, #{gradeGradeId,jdbcType=CHAR}, #{userRole,jdbcType=INTEGER}, 
-      #{userInfoOpenId,jdbcType=VARCHAR}, #{userCreateTime,jdbcType=TIMESTAMP}, #{userUpdateTime,jdbcType=TIMESTAMP}
+      #{userInfoOpenId,jdbcType=VARCHAR}, now(), now()
       )
   </insert>
     <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.UserInfo">
@@ -80,9 +80,7 @@
             <if test="userCreateTime != null">
                 user_create_time,
             </if>
-            <if test="userUpdateTime != null">
-                user_update_time,
-            </if>
+                user_update_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">
@@ -116,11 +114,9 @@
                 #{userInfoOpenId,jdbcType=VARCHAR},
             </if>
             <if test="userCreateTime != null">
-                #{userCreateTime,jdbcType=TIMESTAMP},
+                now(),
             </if>
-            <if test="userUpdateTime != null">
-                #{userUpdateTime,jdbcType=TIMESTAMP},
-            </if>
+                now()
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.UserInfo">
@@ -156,9 +152,7 @@
             <if test="userCreateTime != null">
                 user_create_time = #{userCreateTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="userUpdateTime != null">
-                user_update_time = #{userUpdateTime,jdbcType=TIMESTAMP},
-            </if>
+                user_update_time = now()
         </set>
         where user_id = #{userId,jdbcType=INTEGER}
     </update>
@@ -174,19 +168,44 @@
       user_role = #{userRole,jdbcType=INTEGER},
       user_info_open_id = #{userInfoOpenId,jdbcType=VARCHAR},
       user_create_time = #{userCreateTime,jdbcType=TIMESTAMP},
-      user_update_time = #{userUpdateTime,jdbcType=TIMESTAMP}
+      user_update_time = now()
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
 
     <select id="checkUserLoginName" resultType="int" parameterType="String">
         select count(1)
         from user_info
-        when user_login_name = {#userLoginName}
+        where user_login_name = #{userLoginName}
     </select>
 
     <select id="checkEmail" resultType="int" parameterType="String">
         select count(1)
         from user_info
-        when user_email = {#email}
+        where user_email = #{email}
+    </select>
+
+    <select id="checkUserByEmail" resultMap="BaseResultMap" parameterType="String">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info
+        where user_email = #{email}
+    </select>
+
+    <select id="checkPassword" resultType="int" parameterType="map">
+        select count(1)
+        from user_info
+        where user_password = #{pass} and user_id = #{userId}
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info
+        <where>
+            <if test="gradeId != null">grade_grade_id = #{gradeId}</if>
+            <if test="departmentId != null">department_department_id = #{departmentId}</if>
+            <if test="role != null">user_role = #{role}</if>
+        </where>
+        order by user_id
     </select>
 </mapper>

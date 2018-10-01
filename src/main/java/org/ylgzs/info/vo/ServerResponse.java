@@ -1,7 +1,9 @@
 package org.ylgzs.info.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import lombok.ToString;
 import org.ylgzs.info.enums.ResultEnum;
 
 import java.io.Serializable;
@@ -13,6 +15,8 @@ import java.io.Serializable;
  * @Date 2018/10/1
  **/
 @Getter
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ServerResponse<T> implements Serializable {
 
     private int status;

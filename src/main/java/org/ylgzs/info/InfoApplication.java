@@ -1,12 +1,11 @@
 package org.ylgzs.info;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-/**
- *
- */
+@MapperScan("org.ylgzs.info.dao")
 public class InfoApplication {
 
     public static void main(String[] args) {

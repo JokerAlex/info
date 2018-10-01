@@ -25,7 +25,7 @@
         <!--滚动策略-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>/var/log/tomcat/info/info.%d.log</fileNamePattern>
+            <fileNamePattern>/Users/alex/program/IdeaProjects/log/tomcat/info/info.%d.log</fileNamePattern>
         </rollingPolicy>
     </appender>
 
@@ -42,7 +42,7 @@
         <!--滚动策略-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>/var/log/tomcat/info/error.%d.log</fileNamePattern>
+            <fileNamePattern>/Users/alex/program/IdeaProjects/log/tomcat/info/error.%d.log</fileNamePattern>
         </rollingPolicy>
     </appender>
 

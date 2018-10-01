@@ -8,7 +8,7 @@ package org.ylgzs.info.constant;
  **/
 public interface UserConst {
 
-    String USER_LOGIN_NAME = "loginname";
+    String USER_LOGIN_NAME = "login_name";
 
     String EMAIL = "email";
 }
