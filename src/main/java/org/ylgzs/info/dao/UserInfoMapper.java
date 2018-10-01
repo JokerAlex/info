@@ -1,7 +1,12 @@
 package org.ylgzs.info.dao;
 
+import org.springframework.stereotype.Repository;
 import org.ylgzs.info.pojo.UserInfo;
 
+/**
+ * @author alex
+ */
+@Repository
 public interface UserInfoMapper {
     int deleteByPrimaryKey(Integer userId);
 
@@ -14,4 +19,8 @@ public interface UserInfoMapper {
     int updateByPrimaryKeySelective(UserInfo record);
 
     int updateByPrimaryKey(UserInfo record);
+
+    int checkUserLoginName(String userLoginName);
+
+    int checkEmail(String email);
 }

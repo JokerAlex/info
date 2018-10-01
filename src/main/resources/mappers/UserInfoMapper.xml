@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="org.ylgzs.info.dao.UserInfoMapper" >
-  <resultMap id="BaseResultMap" type="org.ylgzs.info.pojo.UserInfo" >
-    <constructor >
-      <idArg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="user_login_name" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="user_password" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="user_email" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="user_email_confirm" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="department_department_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="grade_grade_id" jdbcType="CHAR" javaType="java.lang.String" />
-      <arg column="user_role" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="user_info_open_id" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="user_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="user_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-    </constructor>
-  </resultMap>
-  <sql id="Base_Column_List" >
+<mapper namespace="org.ylgzs.info.dao.UserInfoMapper">
+    <resultMap id="BaseResultMap" type="org.ylgzs.info.pojo.UserInfo">
+        <constructor>
+            <idArg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="user_login_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="user_password" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="user_email" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="user_email_confirm" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="department_department_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="grade_grade_id" jdbcType="CHAR" javaType="java.lang.String"/>
+            <arg column="user_role" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="user_info_open_id" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="user_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="user_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
     user_id, user_login_name, user_password, user_name, user_email, user_email_confirm, 
     department_department_id, grade_grade_id, user_role, user_info_open_id, user_create_time, 
     user_update_time
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from user_info
-    where user_id = #{userId,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user_info
     where user_id = #{userId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="org.ylgzs.info.pojo.UserInfo" >
+    <insert id="insert" parameterType="org.ylgzs.info.pojo.UserInfo">
     insert into user_info (user_id, user_login_name, user_password, 
       user_name, user_email, user_email_confirm, 
       department_department_id, grade_grade_id, user_role, 
@@ -44,125 +44,125 @@
       #{userInfoOpenId,jdbcType=VARCHAR}, #{userCreateTime,jdbcType=TIMESTAMP}, #{userUpdateTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.UserInfo" >
-    insert into user_info
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="userId != null" >
-        user_id,
-      </if>
-      <if test="userLoginName != null" >
-        user_login_name,
-      </if>
-      <if test="userPassword != null" >
-        user_password,
-      </if>
-      <if test="userName != null" >
-        user_name,
-      </if>
-      <if test="userEmail != null" >
-        user_email,
-      </if>
-      <if test="userEmailConfirm != null" >
-        user_email_confirm,
-      </if>
-      <if test="departmentDepartmentId != null" >
-        department_department_id,
-      </if>
-      <if test="gradeGradeId != null" >
-        grade_grade_id,
-      </if>
-      <if test="userRole != null" >
-        user_role,
-      </if>
-      <if test="userInfoOpenId != null" >
-        user_info_open_id,
-      </if>
-      <if test="userCreateTime != null" >
-        user_create_time,
-      </if>
-      <if test="userUpdateTime != null" >
-        user_update_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="userId != null" >
-        #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="userLoginName != null" >
-        #{userLoginName,jdbcType=VARCHAR},
-      </if>
-      <if test="userPassword != null" >
-        #{userPassword,jdbcType=VARCHAR},
-      </if>
-      <if test="userName != null" >
-        #{userName,jdbcType=VARCHAR},
-      </if>
-      <if test="userEmail != null" >
-        #{userEmail,jdbcType=VARCHAR},
-      </if>
-      <if test="userEmailConfirm != null" >
-        #{userEmailConfirm,jdbcType=INTEGER},
-      </if>
-      <if test="departmentDepartmentId != null" >
-        #{departmentDepartmentId,jdbcType=INTEGER},
-      </if>
-      <if test="gradeGradeId != null" >
-        #{gradeGradeId,jdbcType=CHAR},
-      </if>
-      <if test="userRole != null" >
-        #{userRole,jdbcType=INTEGER},
-      </if>
-      <if test="userInfoOpenId != null" >
-        #{userInfoOpenId,jdbcType=VARCHAR},
-      </if>
-      <if test="userCreateTime != null" >
-        #{userCreateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="userUpdateTime != null" >
-        #{userUpdateTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.UserInfo" >
-    update user_info
-    <set >
-      <if test="userLoginName != null" >
-        user_login_name = #{userLoginName,jdbcType=VARCHAR},
-      </if>
-      <if test="userPassword != null" >
-        user_password = #{userPassword,jdbcType=VARCHAR},
-      </if>
-      <if test="userName != null" >
-        user_name = #{userName,jdbcType=VARCHAR},
-      </if>
-      <if test="userEmail != null" >
-        user_email = #{userEmail,jdbcType=VARCHAR},
-      </if>
-      <if test="userEmailConfirm != null" >
-        user_email_confirm = #{userEmailConfirm,jdbcType=INTEGER},
-      </if>
-      <if test="departmentDepartmentId != null" >
-        department_department_id = #{departmentDepartmentId,jdbcType=INTEGER},
-      </if>
-      <if test="gradeGradeId != null" >
-        grade_grade_id = #{gradeGradeId,jdbcType=CHAR},
-      </if>
-      <if test="userRole != null" >
-        user_role = #{userRole,jdbcType=INTEGER},
-      </if>
-      <if test="userInfoOpenId != null" >
-        user_info_open_id = #{userInfoOpenId,jdbcType=VARCHAR},
-      </if>
-      <if test="userCreateTime != null" >
-        user_create_time = #{userCreateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="userUpdateTime != null" >
-        user_update_time = #{userUpdateTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where user_id = #{userId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.UserInfo" >
+    <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.UserInfo">
+        insert into user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userLoginName != null">
+                user_login_name,
+            </if>
+            <if test="userPassword != null">
+                user_password,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userEmail != null">
+                user_email,
+            </if>
+            <if test="userEmailConfirm != null">
+                user_email_confirm,
+            </if>
+            <if test="departmentDepartmentId != null">
+                department_department_id,
+            </if>
+            <if test="gradeGradeId != null">
+                grade_grade_id,
+            </if>
+            <if test="userRole != null">
+                user_role,
+            </if>
+            <if test="userInfoOpenId != null">
+                user_info_open_id,
+            </if>
+            <if test="userCreateTime != null">
+                user_create_time,
+            </if>
+            <if test="userUpdateTime != null">
+                user_update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="userLoginName != null">
+                #{userLoginName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null">
+                #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmail != null">
+                #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmailConfirm != null">
+                #{userEmailConfirm,jdbcType=INTEGER},
+            </if>
+            <if test="departmentDepartmentId != null">
+                #{departmentDepartmentId,jdbcType=INTEGER},
+            </if>
+            <if test="gradeGradeId != null">
+                #{gradeGradeId,jdbcType=CHAR},
+            </if>
+            <if test="userRole != null">
+                #{userRole,jdbcType=INTEGER},
+            </if>
+            <if test="userInfoOpenId != null">
+                #{userInfoOpenId,jdbcType=VARCHAR},
+            </if>
+            <if test="userCreateTime != null">
+                #{userCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="userUpdateTime != null">
+                #{userUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.UserInfo">
+        update user_info
+        <set>
+            <if test="userLoginName != null">
+                user_login_name = #{userLoginName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null">
+                user_password = #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmail != null">
+                user_email = #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmailConfirm != null">
+                user_email_confirm = #{userEmailConfirm,jdbcType=INTEGER},
+            </if>
+            <if test="departmentDepartmentId != null">
+                department_department_id = #{departmentDepartmentId,jdbcType=INTEGER},
+            </if>
+            <if test="gradeGradeId != null">
+                grade_grade_id = #{gradeGradeId,jdbcType=CHAR},
+            </if>
+            <if test="userRole != null">
+                user_role = #{userRole,jdbcType=INTEGER},
+            </if>
+            <if test="userInfoOpenId != null">
+                user_info_open_id = #{userInfoOpenId,jdbcType=VARCHAR},
+            </if>
+            <if test="userCreateTime != null">
+                user_create_time = #{userCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="userUpdateTime != null">
+                user_update_time = #{userUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.UserInfo">
     update user_info
     set user_login_name = #{userLoginName,jdbcType=VARCHAR},
       user_password = #{userPassword,jdbcType=VARCHAR},
@@ -177,4 +177,16 @@
       user_update_time = #{userUpdateTime,jdbcType=TIMESTAMP}
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
+
+    <select id="checkUserLoginName" resultType="int" parameterType="String">
+        select count(1)
+        from user_info
+        when user_login_name = {#userLoginName}
+    </select>
+
+    <select id="checkEmail" resultType="int" parameterType="String">
+        select count(1)
+        from user_info
+        when user_email = {#email}
+    </select>
 </mapper>
