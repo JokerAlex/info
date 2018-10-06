@@ -31,9 +31,7 @@ public class DepartmentServiceImplTest {
 
     @Test
     public void addDepartment() {
-        Department department = new Department();
-        department.setDepartmentName("物理学院");
-        ServerResponse serverResponse = departmentService.addDepartment(department);
+        ServerResponse serverResponse = departmentService.addDepartment("物理学院");
         System.out.println(serverResponse.toString());
     }
 
