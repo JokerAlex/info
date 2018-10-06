@@ -6,6 +6,7 @@
       <idArg column="table_info_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <idArg column="user_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="table_info_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="collection_name" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="table_info_description" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="table_info_cols" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="table_info_query_col" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -15,8 +16,8 @@
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    table_info_id, user_user_id, table_info_name, table_info_description, table_info_cols, 
-    table_info_query_col, table_info_pv, table_info_create_time, table_info_update_time
+    table_info_id, user_user_id, table_info_name, collection_name, table_info_description, 
+    table_info_cols, table_info_query_col, table_info_pv, table_info_create_time, table_info_update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="org.ylgzs.info.pojo.TableInfoKey" >
     select 
@@ -32,15 +33,15 @@
   </delete>
   <insert id="insert" parameterType="org.ylgzs.info.pojo.TableInfo" >
     insert into table_info (table_info_id, user_user_id, table_info_name, 
-      table_info_description, table_info_cols, table_info_query_col, 
-      table_info_pv, table_info_create_time, table_info_update_time
-      )
+      collection_name, table_info_description, table_info_cols, 
+      table_info_query_col, table_info_pv, table_info_create_time, 
+      table_info_update_time)
     values (#{tableInfoId,jdbcType=INTEGER}, #{userUserId,jdbcType=INTEGER}, #{tableInfoName,jdbcType=VARCHAR}, 
-      #{tableInfoDescription,jdbcType=VARCHAR}, #{tableInfoCols,jdbcType=VARCHAR}, #{tableInfoQueryCol,jdbcType=VARCHAR}, 
-      #{tableInfoPv,jdbcType=INTEGER}, now(), now()
-      )
+      #{collectionName,jdbcType=VARCHAR}, #{tableInfoDescription,jdbcType=VARCHAR}, #{tableInfoCols,jdbcType=VARCHAR}, 
+      #{tableInfoQueryCol,jdbcType=VARCHAR}, #{tableInfoPv,jdbcType=INTEGER}, now(),
+      now())
   </insert>
-  <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.TableInfo" >
+  <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.TableInfo" useGeneratedKeys="true" keyProperty="tableInfoId">
     insert into table_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="tableInfoId != null" >
@@ -51,6 +52,9 @@
       </if>
       <if test="tableInfoName != null" >
         table_info_name,
+      </if>
+      <if test="collectionName != null" >
+        collection_name,
       </if>
       <if test="tableInfoDescription != null" >
         table_info_description,
@@ -64,7 +68,7 @@
       <if test="tableInfoPv != null" >
         table_info_pv,
       </if>
-        table_info_create_time
+        table_info_create_time,
         table_info_update_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -76,6 +80,9 @@
       </if>
       <if test="tableInfoName != null" >
         #{tableInfoName,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionName != null" >
+        #{collectionName,jdbcType=VARCHAR},
       </if>
       <if test="tableInfoDescription != null" >
         #{tableInfoDescription,jdbcType=VARCHAR},
@@ -98,6 +105,9 @@
     <set >
       <if test="tableInfoName != null" >
         table_info_name = #{tableInfoName,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionName != null" >
+        collection_name = #{collectionName,jdbcType=VARCHAR},
       </if>
       <if test="tableInfoDescription != null" >
         table_info_description = #{tableInfoDescription,jdbcType=VARCHAR},
@@ -122,6 +132,7 @@
   <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.TableInfo" >
     update table_info
     set table_info_name = #{tableInfoName,jdbcType=VARCHAR},
+      collection_name = #{collectionName,jdbcType=VARCHAR},
       table_info_description = #{tableInfoDescription,jdbcType=VARCHAR},
       table_info_cols = #{tableInfoCols,jdbcType=VARCHAR},
       table_info_query_col = #{tableInfoQueryCol,jdbcType=VARCHAR},
@@ -131,4 +142,23 @@
     where table_info_id = #{tableInfoId,jdbcType=INTEGER}
       and user_user_id = #{userUserId,jdbcType=INTEGER}
   </update>
+
+  <select id="checkTableName" parameterType="map" resultType="int">
+    select count(1)
+    from table_info
+    where user_user_id = #{userId} and table_info_name = #{tableName}
+  </select>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from table_info
+    join user_info
+    on table_info.user_user_id = user_info.user_id
+    <where>
+      <if test="userId != null">user_info.user_id = #{userId}</if>
+      <if test="gradeId != null">user_info.grade_grade_id = #{gradeId}</if>
+      <if test="departmentId != null">user_info.department_department_id = #{departmentId}</if>
+    </where>
+  </select>
 </mapper>

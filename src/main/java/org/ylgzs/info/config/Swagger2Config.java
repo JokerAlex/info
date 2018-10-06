@@ -6,6 +6,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -31,11 +32,12 @@ public class Swagger2Config {
     }
 
     private ApiInfo apiInfo() {
+        Contact contact = new Contact("alex", "https://github.com/JokerAlex/info", "alex.zhao1023@gmail.com");
         return new ApiInfoBuilder()
                 .title("INFO-信息发布平台在线api文档")
                 .description("Swagger2 构建在线api文档")
                 .termsOfServiceUrl("https://github.com/JokerAlex/info")
-                .contact("alex")
+                .contact(contact)
                 .version("1.0")
                 .build();
     }
