@@ -6,7 +6,7 @@ spring:
     password: 1234567890
   data:
     mongodb:
-      uri: mongodb://infoadmin:root@111.230.254.85:27017/info
+      uri: mongodb://infoadmin:root@localhost:27017/info
 # mybatis 配置
 mybatis:
   check-config-location: false
