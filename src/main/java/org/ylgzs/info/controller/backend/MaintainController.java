@@ -51,10 +51,10 @@ public class MaintainController {
     }
 
     @ApiOperation(value = "添加部门", notes = "添加部门信息")
-    @ApiImplicitParam(name = "department", value = "部门详细实体", required = true, dataTypeClass = Department.class)
+    @ApiImplicitParam(name = "departmentName", value = "部门名称", required = true, dataTypeClass = String.class)
     @PostMapping("/department/add")
-    public ServerResponse addDepartment(Department department) {
-        return iDepartmentService.addDepartment(department);
+    public ServerResponse addDepartment(String departmentName) {
+        return iDepartmentService.addDepartment(departmentName);
     }
     @ApiOperation(value = "更新部门", notes = "更新部门信息")
     @ApiImplicitParam(name = "department", value = "部门详细实体", required = true, dataTypeClass = Department.class)

@@ -21,10 +21,10 @@ public interface IDepartmentService {
 
     /**
      * 添加部门
-     * @param department
+     * @param departmentName
      * @return
      */
-    ServerResponse<String> addDepartment(Department department);
+    ServerResponse<String> addDepartment(String departmentName);
 
     /**
      * 更新部门信息

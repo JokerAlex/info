@@ -20,7 +20,7 @@ import java.util.List;
  * @Author alex
  * @Date 2018/10/1
  **/
-@Service
+@Service("iDepartmentService")
 @Slf4j
 public class DepartmentServiceImpl implements IDepartmentService {
 
@@ -38,10 +38,12 @@ public class DepartmentServiceImpl implements IDepartmentService {
     }
 
     @Override
-    public ServerResponse<String> addDepartment(Department department) {
-        if (department == null || StringUtils.isEmpty(department.getDepartmentName())) {
+    public ServerResponse<String> addDepartment(String departmentName) {
+        if (StringUtils.isEmpty(departmentName)) {
             return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
+        Department department = new Department();
+        department.setDepartmentName(departmentName);
         int count = departmentMapper.insertSelective(department);
         if (count > 0) {
             return ServerResponse.isSuccess();
