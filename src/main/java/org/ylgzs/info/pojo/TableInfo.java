@@ -8,6 +8,8 @@ import java.util.Date;
 public class TableInfo extends TableInfoKey {
     private String tableInfoName;
 
+    private String collectionName;
+
     private String tableInfoDescription;
 
     private String tableInfoCols;
@@ -20,9 +22,10 @@ public class TableInfo extends TableInfoKey {
 
     private Date tableInfoUpdateTime;
 
-    public TableInfo(Integer tableInfoId, Integer userUserId, String tableInfoName, String tableInfoDescription, String tableInfoCols, String tableInfoQueryCol, Integer tableInfoPv, Date tableInfoCreateTime, Date tableInfoUpdateTime) {
+    public TableInfo(Integer tableInfoId, Integer userUserId, String tableInfoName, String collectionName, String tableInfoDescription, String tableInfoCols, String tableInfoQueryCol, Integer tableInfoPv, Date tableInfoCreateTime, Date tableInfoUpdateTime) {
         super(tableInfoId, userUserId);
         this.tableInfoName = tableInfoName;
+        this.collectionName = collectionName;
         this.tableInfoDescription = tableInfoDescription;
         this.tableInfoCols = tableInfoCols;
         this.tableInfoQueryCol = tableInfoQueryCol;
@@ -41,6 +44,14 @@ public class TableInfo extends TableInfoKey {
 
     public void setTableInfoName(String tableInfoName) {
         this.tableInfoName = tableInfoName == null ? null : tableInfoName.trim();
+    }
+
+    public String getCollectionName() {
+        return collectionName;
+    }
+
+    public void setCollectionName(String collectionName) {
+        this.collectionName = collectionName == null ? null : collectionName.trim();
     }
 
     public String getTableInfoDescription() {
