@@ -1,8 +1,14 @@
 package org.ylgzs.info.dao;
 
+import io.swagger.models.auth.In;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 import org.ylgzs.info.pojo.TableInfo;
 import org.ylgzs.info.pojo.TableInfoKey;
 
+import java.util.List;
+
+@Repository
 public interface TableInfoMapper {
     int deleteByPrimaryKey(TableInfoKey key);
 
@@ -15,4 +21,8 @@ public interface TableInfoMapper {
     int updateByPrimaryKeySelective(TableInfo record);
 
     int updateByPrimaryKey(TableInfo record);
+
+    int checkTableName(@Param("userId")Integer userId, @Param("tableName")String tableName);
+
+    List<TableInfo> list(@Param("userId") Integer userId, @Param("gradeId")String gradeId, @Param("departmentId") Integer departmentId);
 }
