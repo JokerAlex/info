@@ -6,13 +6,13 @@ import java.util.Date;
 
 @ToString
 public class QrCodeTable extends QrCodeTableKey {
-    private String tableStatus;
+    private Integer tableStatus;
 
     private Date createTime;
 
     private Date updateTime;
 
-    public QrCodeTable(Integer qrcodeId, Integer tableId, String tableStatus, Date createTime, Date updateTime) {
+    public QrCodeTable(Integer qrcodeId, Integer tableId, Integer tableStatus, Date createTime, Date updateTime) {
         super(qrcodeId, tableId);
         this.tableStatus = tableStatus;
         this.createTime = createTime;
@@ -23,12 +23,12 @@ public class QrCodeTable extends QrCodeTableKey {
         super();
     }
 
-    public String getTableStatus() {
+    public Integer getTableStatus() {
         return tableStatus;
     }
 
-    public void setTableStatus(String tableStatus) {
-        this.tableStatus = tableStatus == null ? null : tableStatus.trim();
+    public void setTableStatus(Integer tableStatus) {
+        this.tableStatus = tableStatus;
     }
 
     public Date getCreateTime() {
