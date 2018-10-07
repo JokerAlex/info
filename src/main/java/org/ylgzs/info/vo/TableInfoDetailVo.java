@@ -11,6 +11,8 @@ import lombok.Data;
 @Data
 public class TableInfoDetailVo {
 
+    private Integer tableInfoId;
+
     private String tableInfoName;
 
     private String userName;
@@ -28,7 +30,8 @@ public class TableInfoDetailVo {
     public TableInfoDetailVo() {
     }
 
-    public TableInfoDetailVo(String tableInfoName, String userName, String tableInfoDescription, String tableInfoQueryCol, Integer tableInfoPv, String tableInfoCreateTime, String tableInfoUpdateTime) {
+    public TableInfoDetailVo(Integer tableInfoId, String tableInfoName, String userName, String tableInfoDescription, String tableInfoQueryCol, Integer tableInfoPv, String tableInfoCreateTime, String tableInfoUpdateTime) {
+        this.tableInfoId = tableInfoId;
         this.tableInfoName = tableInfoName;
         this.userName = userName;
         this.tableInfoDescription = tableInfoDescription;

@@ -53,8 +53,8 @@ public class ExcelUtil {
     }
 
 
-
     private static List<List<String>> read(Sheet sheet) {
+        //TODO 重复列过滤
         return StreamSupport.stream(sheet.spliterator(), true)
                 .filter(Objects::nonNull)
                 .map(row -> StreamSupport.stream(row.spliterator(), false)

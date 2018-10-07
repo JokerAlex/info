@@ -37,7 +37,7 @@ public interface ITableService {
      * @param tableInfo
      * @return
      */
-    ServerResponse<String> updateTableInfo(TableInfo tableInfo);
+    ServerResponse<String> updateTableInfo(Integer userId, TableInfo tableInfo);
 
     /**
      * 删除表格
