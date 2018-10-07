@@ -12,8 +12,6 @@ public class TableInfo extends TableInfoKey {
 
     private String tableInfoDescription;
 
-    private String tableInfoCols;
-
     private String tableInfoQueryCol;
 
     private Integer tableInfoPv;
@@ -22,12 +20,11 @@ public class TableInfo extends TableInfoKey {
 
     private Date tableInfoUpdateTime;
 
-    public TableInfo(Integer tableInfoId, Integer userUserId, String tableInfoName, String collectionName, String tableInfoDescription, String tableInfoCols, String tableInfoQueryCol, Integer tableInfoPv, Date tableInfoCreateTime, Date tableInfoUpdateTime) {
+    public TableInfo(Integer tableInfoId, Integer userUserId, String tableInfoName, String collectionName, String tableInfoDescription, String tableInfoQueryCol, Integer tableInfoPv, Date tableInfoCreateTime, Date tableInfoUpdateTime) {
         super(tableInfoId, userUserId);
         this.tableInfoName = tableInfoName;
         this.collectionName = collectionName;
         this.tableInfoDescription = tableInfoDescription;
-        this.tableInfoCols = tableInfoCols;
         this.tableInfoQueryCol = tableInfoQueryCol;
         this.tableInfoPv = tableInfoPv;
         this.tableInfoCreateTime = tableInfoCreateTime;
@@ -60,14 +57,6 @@ public class TableInfo extends TableInfoKey {
 
     public void setTableInfoDescription(String tableInfoDescription) {
         this.tableInfoDescription = tableInfoDescription == null ? null : tableInfoDescription.trim();
-    }
-
-    public String getTableInfoCols() {
-        return tableInfoCols;
-    }
-
-    public void setTableInfoCols(String tableInfoCols) {
-        this.tableInfoCols = tableInfoCols == null ? null : tableInfoCols.trim();
     }
 
     public String getTableInfoQueryCol() {
