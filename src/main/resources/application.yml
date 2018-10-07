@@ -7,6 +7,15 @@ spring:
   data:
     mongodb:
       uri: mongodb://infoadmin:root@localhost:27017/info
+  servlet:
+    multipart:
+      max-request-size: 10Mb
+      max-file-size: 2Mb
+
+
+
+
+
 # mybatis 配置
 mybatis:
   check-config-location: false
@@ -20,9 +29,6 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: countSql
-
-
-
 
 
 
