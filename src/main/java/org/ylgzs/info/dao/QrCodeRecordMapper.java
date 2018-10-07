@@ -1,8 +1,12 @@
 package org.ylgzs.info.dao;
 
+import org.springframework.stereotype.Repository;
 import org.ylgzs.info.pojo.QrCodeRecord;
 import org.ylgzs.info.pojo.QrCodeRecordKey;
 
+import java.util.List;
+
+@Repository
 public interface QrCodeRecordMapper {
     int deleteByPrimaryKey(QrCodeRecordKey key);
 
@@ -15,4 +19,6 @@ public interface QrCodeRecordMapper {
     int updateByPrimaryKeySelective(QrCodeRecord record);
 
     int updateByPrimaryKey(QrCodeRecord record);
+
+    List<QrCodeRecord> list(Integer userId);
 }

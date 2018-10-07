@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="org.ylgzs.info.dao.QrCodeRecordMapper" >
-  <resultMap id="BaseResultMap" type="org.ylgzs.info.pojo.QrCodeRecord" >
-    <constructor >
-      <idArg column="qrcode_record_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <idArg column="user_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="qrcode_record_code" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="qrcode_record_name" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="qrcode_record_description" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="qrcode_record_status" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="qrcode_record_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="qrcode_record_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-    </constructor>
-  </resultMap>
-  <sql id="Base_Column_List" >
+<mapper namespace="org.ylgzs.info.dao.QrCodeRecordMapper">
+    <resultMap id="BaseResultMap" type="org.ylgzs.info.pojo.QrCodeRecord">
+        <constructor>
+            <idArg column="qrcode_record_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <idArg column="user_user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="qrcode_record_code" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="qrcode_record_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="qrcode_record_description" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="qrcode_record_status" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="qrcode_record_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="qrcode_record_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
     qrcode_record_id, user_user_id, qrcode_record_code, qrcode_record_name, qrcode_record_description, 
     qrcode_record_status, qrcode_record_create_time, qrcode_record_update_time
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="org.ylgzs.info.pojo.QrCodeRecordKey" >
-    select 
-    <include refid="Base_Column_List" />
-    from qrcode_record
-    where qrcode_record_id = #{qrcodeRecordId,jdbcType=INTEGER}
-      and user_user_id = #{userUserId,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="org.ylgzs.info.pojo.QrCodeRecordKey" >
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="org.ylgzs.info.pojo.QrCodeRecordKey">
+        select
+        <include refid="Base_Column_List"/>
+        from qrcode_record
+        where qrcode_record_id = #{qrcodeRecordId,jdbcType=INTEGER}
+        and user_user_id = #{userUserId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="org.ylgzs.info.pojo.QrCodeRecordKey">
     delete from qrcode_record
     where qrcode_record_id = #{qrcodeRecordId,jdbcType=INTEGER}
       and user_user_id = #{userUserId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="org.ylgzs.info.pojo.QrCodeRecord" >
+    <insert id="insert" parameterType="org.ylgzs.info.pojo.QrCodeRecord">
     insert into qrcode_record (qrcode_record_id, user_user_id, qrcode_record_code, 
       qrcode_record_name, qrcode_record_description, 
       qrcode_record_status, qrcode_record_create_time, 
@@ -39,77 +39,78 @@
       #{qrcodeRecordStatus,jdbcType=INTEGER}, now(),
       now())
   </insert>
-  <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.QrCodeRecord" >
-    insert into qrcode_record
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="qrcodeRecordId != null" >
-        qrcode_record_id,
-      </if>
-      <if test="userUserId != null" >
-        user_user_id,
-      </if>
-      <if test="qrcodeRecordCode != null" >
-        qrcode_record_code,
-      </if>
-      <if test="qrcodeRecordName != null" >
-        qrcode_record_name,
-      </if>
-      <if test="qrcodeRecordDescription != null" >
-        qrcode_record_description,
-      </if>
-      <if test="qrcodeRecordStatus != null" >
-        qrcode_record_status,
-      </if>
-        qrcode_record_create_time,
-        qrcode_record_update_time
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="qrcodeRecordId != null" >
-        #{qrcodeRecordId,jdbcType=INTEGER},
-      </if>
-      <if test="userUserId != null" >
-        #{userUserId,jdbcType=INTEGER},
-      </if>
-      <if test="qrcodeRecordCode != null" >
-        #{qrcodeRecordCode,jdbcType=VARCHAR},
-      </if>
-      <if test="qrcodeRecordName != null" >
-        #{qrcodeRecordName,jdbcType=VARCHAR},
-      </if>
-      <if test="qrcodeRecordDescription != null" >
-        #{qrcodeRecordDescription,jdbcType=VARCHAR},
-      </if>
-      <if test="qrcodeRecordStatus != null" >
-        #{qrcodeRecordStatus,jdbcType=INTEGER},
-      </if>
-      now(),
-      now()
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.QrCodeRecord" >
-    update qrcode_record
-    <set >
-      <if test="qrcodeRecordCode != null" >
-        qrcode_record_code = #{qrcodeRecordCode,jdbcType=VARCHAR},
-      </if>
-      <if test="qrcodeRecordName != null" >
-        qrcode_record_name = #{qrcodeRecordName,jdbcType=VARCHAR},
-      </if>
-      <if test="qrcodeRecordDescription != null" >
-        qrcode_record_description = #{qrcodeRecordDescription,jdbcType=VARCHAR},
-      </if>
-      <if test="qrcodeRecordStatus != null" >
-        qrcode_record_status = #{qrcodeRecordStatus,jdbcType=INTEGER},
-      </if>
-      <if test="qrcodeRecordCreateTime != null" >
-        qrcode_record_create_time = #{qrcodeRecordCreateTime,jdbcType=TIMESTAMP},
-      </if>
-        qrcode_record_update_time = now()
-    </set>
-    where qrcode_record_id = #{qrcodeRecordId,jdbcType=INTEGER}
-      and user_user_id = #{userUserId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.QrCodeRecord" >
+    <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.QrCodeRecord" useGeneratedKeys="true"
+            keyProperty="qrcodeRecordId">
+        insert into qrcode_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qrcodeRecordId != null">
+                qrcode_record_id,
+            </if>
+            <if test="userUserId != null">
+                user_user_id,
+            </if>
+            <if test="qrcodeRecordCode != null">
+                qrcode_record_code,
+            </if>
+            <if test="qrcodeRecordName != null">
+                qrcode_record_name,
+            </if>
+            <if test="qrcodeRecordDescription != null">
+                qrcode_record_description,
+            </if>
+            <if test="qrcodeRecordStatus != null">
+                qrcode_record_status,
+            </if>
+            qrcode_record_create_time,
+            qrcode_record_update_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qrcodeRecordId != null">
+                #{qrcodeRecordId,jdbcType=INTEGER},
+            </if>
+            <if test="userUserId != null">
+                #{userUserId,jdbcType=INTEGER},
+            </if>
+            <if test="qrcodeRecordCode != null">
+                #{qrcodeRecordCode,jdbcType=VARCHAR},
+            </if>
+            <if test="qrcodeRecordName != null">
+                #{qrcodeRecordName,jdbcType=VARCHAR},
+            </if>
+            <if test="qrcodeRecordDescription != null">
+                #{qrcodeRecordDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="qrcodeRecordStatus != null">
+                #{qrcodeRecordStatus,jdbcType=INTEGER},
+            </if>
+            now(),
+            now()
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.QrCodeRecord">
+        update qrcode_record
+        <set>
+            <if test="qrcodeRecordCode != null">
+                qrcode_record_code = #{qrcodeRecordCode,jdbcType=VARCHAR},
+            </if>
+            <if test="qrcodeRecordName != null">
+                qrcode_record_name = #{qrcodeRecordName,jdbcType=VARCHAR},
+            </if>
+            <if test="qrcodeRecordDescription != null">
+                qrcode_record_description = #{qrcodeRecordDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="qrcodeRecordStatus != null">
+                qrcode_record_status = #{qrcodeRecordStatus,jdbcType=INTEGER},
+            </if>
+            <if test="qrcodeRecordCreateTime != null">
+                qrcode_record_create_time = #{qrcodeRecordCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            qrcode_record_update_time = now()
+        </set>
+        where qrcode_record_id = #{qrcodeRecordId,jdbcType=INTEGER}
+        and user_user_id = #{userUserId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.QrCodeRecord">
     update qrcode_record
     set qrcode_record_code = #{qrcodeRecordCode,jdbcType=VARCHAR},
       qrcode_record_name = #{qrcodeRecordName,jdbcType=VARCHAR},
@@ -120,4 +121,11 @@
     where qrcode_record_id = #{qrcodeRecordId,jdbcType=INTEGER}
       and user_user_id = #{userUserId,jdbcType=INTEGER}
   </update>
+
+    <select id="list" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from qrcode_record
+        where user_user_id = #{userId}
+    </select>
 </mapper>
