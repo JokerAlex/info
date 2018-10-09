@@ -10,9 +10,13 @@ import org.ylgzs.info.enums.GradeEnum;
 import org.ylgzs.info.enums.ResultEnum;
 import org.ylgzs.info.pojo.Grade;
 import org.ylgzs.info.service.IGradeService;
+import org.ylgzs.info.util.DateTimeUtil;
+import org.ylgzs.info.vo.GradeVo;
 import org.ylgzs.info.vo.ServerResponse;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName GradeServiceImpl
@@ -28,13 +32,19 @@ public class GradeServiceImpl implements IGradeService {
     private GradeMapper gradeMapper;
 
     @Override
-    public ServerResponse<List<Grade>> listGrade() {
+    public ServerResponse<List<GradeVo>> listGrade() {
         List<Grade> gradeList = gradeMapper.selectList();
         if (CollectionUtils.isEmpty(gradeList)) {
             return ServerResponse.isError(GradeEnum.LIST_GRADE_FAILED.getMessage());
         }
         log.info(gradeList.toString());
-        return ServerResponse.isSuccess(gradeList);
+        List<GradeVo> gradeVos = gradeList.stream()
+                .sorted(Comparator.comparing(Grade::getGradeId))
+                .map(grade -> new GradeVo(grade.getGradeId(),
+                        DateTimeUtil.dateToStr(grade.getGradeCreateTime()),
+                        DateTimeUtil.dateToStr(grade.getGradeUpdateTime())))
+                .collect(Collectors.toList());
+        return ServerResponse.isSuccess(gradeVos);
     }
 
     @Override

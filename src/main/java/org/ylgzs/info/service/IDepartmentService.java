@@ -1,6 +1,7 @@
 package org.ylgzs.info.service;
 
 import org.ylgzs.info.pojo.Department;
+import org.ylgzs.info.vo.DepartmentVo;
 import org.ylgzs.info.vo.ServerResponse;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface IDepartmentService {
      * 获取所有部门
      * @return
      */
-    ServerResponse<List<Department>> listDepartment();
+    ServerResponse<List<DepartmentVo>> listDepartment();
 
     /**
      * 添加部门

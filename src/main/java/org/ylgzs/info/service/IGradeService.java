@@ -1,6 +1,6 @@
 package org.ylgzs.info.service;
 
-import org.ylgzs.info.pojo.Grade;
+import org.ylgzs.info.vo.GradeVo;
 import org.ylgzs.info.vo.ServerResponse;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public interface IGradeService {
      * 获取所有年级信息
      * @return
      */
-    ServerResponse<List<Grade>> listGrade();
+    ServerResponse<List<GradeVo>> listGrade();
 
     /**
      * 添加年级信息
