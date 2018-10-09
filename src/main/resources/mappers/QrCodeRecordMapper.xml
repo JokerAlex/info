@@ -128,4 +128,19 @@
         from qrcode_record
         where user_user_id = #{userId}
     </select>
+
+    <select id="selectByRecordCode" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from qrcode_record
+        where qrcode_record_code = #{recordCode}
+    </select>
+
+    <delete id="deleteByQrCodeRecoedIdBatch" parameterType="list">
+        delete from qrcode_record
+        where qrcode_record_id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>

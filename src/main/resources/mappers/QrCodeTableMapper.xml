@@ -106,15 +106,24 @@
         <constructor>
             <idArg column="table_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="table_info_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="collection_name" jdbcType="VARCHAR" javaType="S=java.lang.String"/>
             <arg column="table_status" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
         </constructor>
     </resultMap>
     <select id="selectByCodeId" resultMap="TableDTOResultMap" parameterType="int">
-        select qt.table_id,ti.table_info_name,qt.table_status,qt.update_time
+        select qt.table_id,ti.table_info_name,ti.collection_name,qt.table_status,qt.update_time
         from qrcode_table as qt
         join table_info as ti
         on ti.table_info_id = qt.table_id
         where qrcode_id = #{codeId}
     </select>
+
+    <delete id="deleteByQrCodeIdBatch" parameterType="list">
+        delete from qrcode_table
+        where qrcode_id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>

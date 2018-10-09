@@ -21,4 +21,8 @@ public interface QrCodeRecordMapper {
     int updateByPrimaryKey(QrCodeRecord record);
 
     List<QrCodeRecord> list(Integer userId);
+
+    QrCodeRecord selectByRecordCode(String recordCode);
+
+    int deleteByQrCodeRecoedIdBatch(List<Integer> list);
 }

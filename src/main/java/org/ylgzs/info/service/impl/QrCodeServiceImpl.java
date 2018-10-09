@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.ylgzs.info.constant.QrCodeConst;
 import org.ylgzs.info.dao.QrCodeRecordMapper;
 import org.ylgzs.info.dao.QrCodeTableMapper;
@@ -130,18 +131,36 @@ public class QrCodeServiceImpl implements IQrCodeService {
 
     @Override
     @Transactional
-    public ServerResponse<String> delRecord(Integer userId, Integer recodeId) {
-        if (userId == null || recodeId == null) {
+    public ServerResponse<String> delRecord(Integer userId, Integer recordId) {
+        if (userId == null || recordId == null) {
             return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
-        log.info("【删除记录】 recodeId = {}", recodeId);
-        int tableCount = qrCodeTableMapper.deleteByQrCodeId(recodeId);
+        log.info("【删除记录】 recordId = {}", recordId);
+        int tableCount = qrCodeTableMapper.deleteByQrCodeId(recordId);
         log.info("【删除记录】 tableCount = {}", tableCount);
 
-        QrCodeRecordKey qrCodeRecordKey = new QrCodeRecordKey(recodeId, userId);
-        int recodeCount = qrCodeRecordMapper.deleteByPrimaryKey(qrCodeRecordKey);
-        log.info("【删除记录】 recodeCount = {}", recodeCount);
-        if (tableCount > 0 && recodeCount > 0) {
+        QrCodeRecordKey qrCodeRecordKey = new QrCodeRecordKey(recordId, userId);
+        int recordCount = qrCodeRecordMapper.deleteByPrimaryKey(qrCodeRecordKey);
+        log.info("【删除记录】 recodeCount = {}", recordCount);
+        if (tableCount > 0 && recordCount > 0) {
+            return ServerResponse.isSuccess();
+        }
+        return ServerResponse.isError(QrCodeEnum.DEL_RECODE_ERROR.getMessage());
+    }
+
+    @Override
+    @Transactional
+    public ServerResponse<String> delRecordBatch(List<Integer> recordIds) {
+        if (recordIds.isEmpty()) {
+            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+        }
+        log.info("【批量删除发布记录】recordIds = {}", recordIds);
+        int tableCount = qrCodeTableMapper.deleteByQrCodeIdBatch(recordIds);
+        log.info("【批量删除发布记录】tableCount = {}", tableCount);
+
+        int recordCount = qrCodeRecordMapper.deleteByQrCodeRecoedIdBatch(recordIds);
+        log.info("【批量删除发布记录】recordCount = {}", recordCount);
+        if (tableCount > 0 && recordCount > 0) {
             return ServerResponse.isSuccess();
         }
         return ServerResponse.isError(QrCodeEnum.DEL_RECODE_ERROR.getMessage());
@@ -194,12 +213,9 @@ public class QrCodeServiceImpl implements IQrCodeService {
                     RecordTableVo vo = new RecordTableVo();
                     vo.setTableId(dto.getTableId());
                     vo.setTableName(dto.getTableName());
+                    vo.setCollectionName(dto.getCollectionName());
                     vo.setUpdateTime(DateTimeUtil.dateToStr(dto.getUpdateTime()));
-                    if (dto.getTableStatus().equals(QrCodeConst.STATUS_ON)) {
-                        vo.setTableStatus(QrCodeConst.TABLE_STATUS_ON);
-                    } else {
-                        vo.setTableStatus(QrCodeConst.TABLE_STATUS_OFF);
-                    }
+                    vo.setTableStatus(dto.getTableStatus());
                     return vo;
                 })
                 .collect(Collectors.toList());
@@ -213,5 +229,43 @@ public class QrCodeServiceImpl implements IQrCodeService {
                 tableVos);
 
         return ServerResponse.isSuccess(recordDetailVo);
+    }
+
+    @Override
+    public ServerResponse<QrCodeRecordDetailVo> getRecodeDetail(String recordCode) {
+        if (StringUtils.isEmpty(recordCode)) {
+            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+        }
+        log.info("【发布记录码】 recordCode = {}", recordCode);
+        QrCodeRecord record = qrCodeRecordMapper.selectByRecordCode(recordCode);
+        if (record == null) {
+            return ServerResponse.isError(QrCodeEnum.GET_DETAIL_ERROR.getMessage());
+        }
+        //发送字段：名称、记录码、描述、状态、列表
+        QrCodeRecordDetailVo recordDetailVo = new QrCodeRecordDetailVo();
+        recordDetailVo.setQrcodeRecordName(record.getQrcodeRecordName());
+        recordDetailVo.setQrcodeRecordCode(record.getQrcodeRecordCode());
+        recordDetailVo.setDescription(record.getQrcodeRecordDescription());
+        recordDetailVo.setQrcodeRecordStatus(record.getQrcodeRecordStatus());
+        if (recordDetailVo.getQrcodeRecordStatus().equals(QrCodeConst.STATUS_ON)) {
+            //获取所有表格 id、表名、插入时间、状态
+            List<RecordTableDetailDTO> tableDetailDTOS = qrCodeTableMapper.selectByCodeId(record.getQrcodeRecordId());
+            if (tableDetailDTOS == null) {
+                return ServerResponse.isError(QrCodeEnum.GET_DETAIL_ERROR.getMessage());
+            }
+            List<RecordTableVo> tableVos = tableDetailDTOS.stream()
+                    .sorted(Comparator.comparing(RecordTableDetailDTO::getUpdateTime).reversed())
+                    .map(dto ->{
+                        RecordTableVo vo = new RecordTableVo();
+                        vo.setTableName(dto.getTableName());
+                        vo.setCollectionName(dto.getCollectionName());
+                        vo.setTableStatus(dto.getTableStatus());
+                        return vo;
+                    })
+                    .collect(Collectors.toList());
+            recordDetailVo.setTableVos(tableVos);
+        }
+        return ServerResponse.isSuccess(recordDetailVo);
+
     }
 }

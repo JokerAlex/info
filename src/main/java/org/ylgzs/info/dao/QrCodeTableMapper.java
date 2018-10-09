@@ -29,4 +29,6 @@ public interface QrCodeTableMapper {
     int deleteByQrCodeId(Integer qrcodeId);
 
     List<RecordTableDetailDTO> selectByCodeId(Integer codeId);
+
+    int deleteByQrCodeIdBatch(List<Integer> list);
 }

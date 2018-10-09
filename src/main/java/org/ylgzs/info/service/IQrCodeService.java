@@ -51,6 +51,13 @@ public interface IQrCodeService {
     ServerResponse<String> delRecord(Integer userId, Integer recodeId);
 
     /**
+     * 批量删除
+     * @param recordIds
+     * @return
+     */
+    ServerResponse<String> delRecordBatch(List<Integer> recordIds);
+
+    /**
      * 后去发布记录列表
      * @param pageNum
      * @param pageSize
@@ -66,4 +73,11 @@ public interface IQrCodeService {
      * @return
      */
     ServerResponse<QrCodeRecordDetailVo> getRecodeDetail(Integer userId, Integer recodeId);
+
+    /**
+     * 外放查询使用
+     * @param recordCode
+     * @return
+     */
+    ServerResponse<QrCodeRecordDetailVo> getRecodeDetail(String recordCode);
 }
