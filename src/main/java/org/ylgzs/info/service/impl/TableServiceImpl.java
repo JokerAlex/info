@@ -101,7 +101,9 @@ public class TableServiceImpl implements ITableService {
                 tableInfo.setUserUserId(userId);
                 tableInfo.setTableInfoName(tableName);
                 tableInfo.setCollectionName(collectionName);
+                log.info("【插入 tableInfo 】tableInfo = {}",tableInfo.toString());
                 int count = tableInfoMapper.insertSelective(tableInfo);
+                log.info("【插入 tableInfo 】count = {}",count);
                 if (count > 0) {
                     return ServerResponse.isSuccess();
                 }
@@ -131,9 +133,11 @@ public class TableServiceImpl implements ITableService {
         update.setUserUserId(userId);
         update.setTableInfoName(tableInfo.getTableInfoName());
         update.setTableInfoDescription(tableInfo.getTableInfoDescription());
-        tableInfo.setTableInfoQueryCol(tableInfo.getTableInfoQueryCol());
+        update.setTableInfoQueryCol(tableInfo.getTableInfoQueryCol());
+        log.info("【更新 tableInfo】tableInfo = {}", update.toString());
 
         int count = tableInfoMapper.updateByPrimaryKeySelective(update);
+        log.info("【更新 tableInfo】count = {}", count);
         if (count > 0) {
             return ServerResponse.isSuccess();
         }
@@ -147,17 +151,40 @@ public class TableServiceImpl implements ITableService {
             return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         //删除mongoDB里的表
+        log.info("【删除表格】userId = {}, tableInfoId = {}", userId, tableInfoId);
         TableInfoKey tableInfoKey = new TableInfoKey(userId,tableInfoId);
         TableInfo tableInfo = tableInfoMapper.selectByPrimaryKey(tableInfoKey);
         mongoTemplate.dropCollection(tableInfo.getCollectionName());
         //删除表信息
         int count = tableInfoMapper.deleteByPrimaryKey(tableInfoKey);
         int codeCount = qrCodeTableMapper.updateStatus(tableInfoId, QrCodeConst.STATUS_OFF);
+        log.info("【删除表格】count = {}, codeCount = {}", count, codeCount);
         if (count > 0 && codeCount > 0) {
             return ServerResponse.isSuccess();
         }
         return ServerResponse.isError(TableEnum.DEL_TABLE_INFO_ERROR.getMessage());
 
+    }
+
+    @Override
+    @Transactional
+    public ServerResponse<String> delTableInfoBatch(List<Integer> tableInfoIds) {
+        if (tableInfoIds.isEmpty()) {
+            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+        }
+        log.info("【删除表格】tableInfoIds = {}", tableInfoIds.toString());
+        List<String> collectionNames = tableInfoMapper.listByTableInfoIds(tableInfoIds).stream()
+                .map(TableInfo::getCollectionName)
+                .collect(Collectors.toList());
+        //删除mongoDB里的表
+        collectionNames.forEach(mongoTemplate::dropCollection);
+        int tableCount = tableInfoMapper.deleteByTableInfoIdBatch(tableInfoIds);
+        int codeCount = qrCodeTableMapper.updateStatusBatch(tableInfoIds, QrCodeConst.STATUS_OFF);
+        log.info("【删除表格】tableCount = {}, codeCount = {}", tableCount, codeCount);
+        if (tableCount > 0 && codeCount > 0) {
+            return ServerResponse.isSuccess();
+        }
+        return ServerResponse.isError(TableEnum.DEL_TABLE_INFO_ERROR.getMessage());
     }
 
     @Override

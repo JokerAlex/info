@@ -7,6 +7,8 @@ import org.ylgzs.info.pojo.TableInfoKey;
 import org.ylgzs.info.vo.ServerResponse;
 import org.ylgzs.info.vo.TableInfoDetailVo;
 
+import java.util.List;
+
 /**
  * @ClassName ITableService
  * @Description 文件列表
@@ -46,6 +48,13 @@ public interface ITableService {
      * @return
      */
     ServerResponse<String> delTableInfo(Integer userId, Integer tableInfoId);
+
+    /**
+     * 批量删除
+     * @param tableInfoIds
+     * @return
+     */
+    ServerResponse<String> delTableInfoBatch(List<Integer> tableInfoIds);
 
     /**
      * 获取列表

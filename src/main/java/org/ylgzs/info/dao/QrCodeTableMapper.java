@@ -31,4 +31,6 @@ public interface QrCodeTableMapper {
     List<RecordTableDetailDTO> selectByCodeId(Integer codeId);
 
     int deleteByQrCodeIdBatch(List<Integer> list);
+
+    int updateStatusBatch(@Param("list")List<Integer> list, @Param("status")Integer status);
 }
