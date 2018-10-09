@@ -16,6 +16,8 @@ public class RecordTableDetailDTO {
 
     private String tableName;
 
+    private String collectionName;
+
     private Integer tableStatus;
 
     private Date updateTime;
@@ -23,9 +25,10 @@ public class RecordTableDetailDTO {
     public RecordTableDetailDTO() {
     }
 
-    public RecordTableDetailDTO(Integer tableId, String tableName, Integer tableStatus, Date updateTime) {
+    public RecordTableDetailDTO(Integer tableId, String tableName, String collectionName, Integer tableStatus, Date updateTime) {
         this.tableId = tableId;
         this.tableName = tableName;
+        this.collectionName = collectionName;
         this.tableStatus = tableStatus;
         this.updateTime = updateTime;
     }
