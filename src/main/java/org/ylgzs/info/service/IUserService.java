@@ -1,8 +1,11 @@
 package org.ylgzs.info.service;
 
 import com.github.pagehelper.PageInfo;
+import org.ylgzs.info.exception.ParameterErrorException;
 import org.ylgzs.info.pojo.UserInfo;
+import org.ylgzs.info.security.entity.TokenResponse;
 import org.ylgzs.info.vo.ServerResponse;
+import org.ylgzs.info.vo.UserInfoVo;
 
 /**
  * @ClassName IUserService
@@ -19,7 +22,7 @@ public interface IUserService {
      * @param type
      * @return
      */
-    ServerResponse<String> checkValid(String str, String type);
+    ServerResponse<String> checkValid(String str, String type) throws ParameterErrorException;
 
     /**
      * 用户注册
@@ -33,23 +36,23 @@ public interface IUserService {
      * @param userInfo
      * @return
      */
-    ServerResponse<UserInfo> updateInformation(UserInfo userInfo);
+    ServerResponse<UserInfoVo> updateInformation(UserInfo userInfo);
 
     /**
      * 修改密码
      * @param oldPass
      * @param newPass
-     * @param userInfo
+     * @param userId
      * @return
      */
-    ServerResponse<String> resetPassword(String oldPass, String newPass, UserInfo userInfo);
+    ServerResponse<String> resetPassword(String oldPass, String newPass, Integer userId);
 
     /**
      * 获取用户信息
      * @param userId
      * @return
      */
-    ServerResponse<UserInfo> getUserInfo(Integer userId);
+    ServerResponse<UserInfoVo> getUserInfo(Integer userId);
 
     /**
      * 获取用户列表

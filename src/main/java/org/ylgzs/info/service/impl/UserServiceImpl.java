@@ -3,18 +3,23 @@ package org.ylgzs.info.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.ylgzs.info.constant.UserConst;
 import org.ylgzs.info.dao.UserInfoMapper;
 import org.ylgzs.info.enums.ResultEnum;
 import org.ylgzs.info.enums.UserEnum;
+import org.ylgzs.info.exception.NotFoundException;
+import org.ylgzs.info.exception.ParameterErrorException;
 import org.ylgzs.info.pojo.UserInfo;
 import org.ylgzs.info.service.IUserService;
-import org.ylgzs.info.util.MD5Util;
 import org.ylgzs.info.vo.ServerResponse;
+import org.ylgzs.info.vo.UserInfoVo;
 
 import java.util.List;
 
@@ -28,41 +33,47 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl implements IUserService {
 
-    @Autowired
-    private UserInfoMapper userInfoMapper;
+    private final UserInfoMapper userInfoMapper;
+    private final PasswordEncoder passwordEncoder;
 
+    @Autowired
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserInfoMapper userInfoMapper) {
+        this.passwordEncoder = passwordEncoder;
+        this.userInfoMapper = userInfoMapper;
+    }
 
     @Override
-    public ServerResponse<String> checkValid(String str, String type) {
+    public ServerResponse<String> checkValid(String str, String type) throws ParameterErrorException {
         log.info("srt = {}, type = {}.", str, type);
-        if (!StringUtils.isEmpty(type)) {
-            //判断检查类型，登录名、邮箱
-            if (UserConst.USER_LOGIN_NAME.equals(type)) {
-                int count = userInfoMapper.checkUserLoginName(str);
-                if (count > 0) {
-                    return ServerResponse.isError(UserEnum.INVALID_USER_LOGIN_NAME.getMessage());
-                }
-            } else if (UserConst.EMAIL.equals(type)){
-                int count = userInfoMapper.checkEmail(str);
-                if (count > 0) {
-                    return ServerResponse.isError(UserEnum.INVALID_EMAIL.getMessage());
-                }
-            } else {
-                return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+        if (StringUtils.isEmpty(type)) {
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+        }
+        //判断检查类型，登录名、邮箱
+        if (UserConst.USER_LOGIN_NAME.equals(type)) {
+            int count = userInfoMapper.checkUserLoginName(str);
+            if (count > 0) {
+                return ServerResponse.isError(UserEnum.INVALID_USER_LOGIN_NAME.getMessage());
+            }
+        } else if (UserConst.EMAIL.equals(type)) {
+            int count = userInfoMapper.checkEmail(str);
+            if (count > 0) {
+                return ServerResponse.isError(UserEnum.INVALID_EMAIL.getMessage());
             }
         } else {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         return ServerResponse.isSuccess();
     }
 
     @Override
+    @Transactional
     public ServerResponse<String> register(UserInfo userInfo) {
-        log.info("userInfo = {}", userInfo.toString());
+
 
         if (userInfo == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
+        log.info("userInfo = {}", userInfo.toString());
         //检查用户名是否可用
         ServerResponse<String> validResponse = this.checkValid(userInfo.getUserLoginName(), UserConst.USER_LOGIN_NAME);
         if (!validResponse.isOk()) {
@@ -73,10 +84,16 @@ public class UserServiceImpl implements IUserService {
         if (!validResponse.isOk()) {
             return validResponse;
         }
-        //加密
-        userInfo.setUserPassword(MD5Util.MD5EncodeUtf8(userInfo.getUserPassword()));
-        userInfo.setUserEmailConfirm(0);
-        int count = userInfoMapper.insert(userInfo);
+        UserInfo insertUserInfo = new UserInfo();
+        insertUserInfo.setUserLoginName(userInfo.getUserLoginName());
+        insertUserInfo.setUserPassword(passwordEncoder.encode(userInfo.getUserPassword()));
+        insertUserInfo.setUserName(userInfo.getUserName());
+        insertUserInfo.setUserEmail(userInfo.getUserEmail());
+        insertUserInfo.setUserEmailConfirm(0);
+        insertUserInfo.setDepartmentDepartmentId(userInfo.getDepartmentDepartmentId());
+        insertUserInfo.setGradeGradeId(userInfo.getGradeGradeId());
+        insertUserInfo.setUserRole(userInfo.getUserRole());
+        int count = userInfoMapper.insert(insertUserInfo);
         if (count > 0) {
             return ServerResponse.isSuccess();
         }
@@ -84,22 +101,25 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ServerResponse<UserInfo> updateInformation(UserInfo userInfo) {
-        //user_login_name不能更新
-        //email校验
+    @Transactional
+    public ServerResponse<UserInfoVo> updateInformation(UserInfo userInfo) {
+        if (userInfo == null) {
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+        }
         log.info("userInfo = {}", userInfo.toString());
         UserInfo emailCount = userInfoMapper.checkUserByEmail(userInfo.getUserEmail());
-        if (emailCount != null && emailCount.getUserId().equals(userInfo.getUserId())) {
-            UserInfo update = new UserInfo();
-            update.setUserId(userInfo.getUserId());
-            update.setUserName(userInfo.getUserName());
-            update.setUserEmail(userInfo.getUserEmail());
-            update.setDepartmentDepartmentId(userInfo.getDepartmentDepartmentId());
-            update.setGradeGradeId(userInfo.getGradeGradeId());
+        if (emailCount == null || emailCount.getUserId().equals(userInfo.getUserId())) {
+            //可更新字段
+            UserInfo updateUserInfo = new UserInfo();
+            updateUserInfo.setUserId(userInfo.getUserId());
+            updateUserInfo.setUserName(userInfo.getUserName());
+            updateUserInfo.setUserEmail(userInfo.getUserEmail());
+            updateUserInfo.setDepartmentDepartmentId(userInfo.getDepartmentDepartmentId());
+            updateUserInfo.setGradeGradeId(userInfo.getGradeGradeId());
 
-            int updateCount = userInfoMapper.updateByPrimaryKeySelective(update);
+            int updateCount = userInfoMapper.updateByPrimaryKeySelective(updateUserInfo);
             if (updateCount > 0) {
-                return ServerResponse.isSuccess(update);
+                return this.getUserInfo(updateUserInfo.getUserId());
             }
             return ServerResponse.isError(UserEnum.UPDATE_FAILED.getMessage());
         }
@@ -107,9 +127,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ServerResponse<String> resetPassword(String oldPass, String newPass, UserInfo userInfo) {
+    public ServerResponse<String> resetPassword(String oldPass, String newPass, Integer userId) {
         //校验旧密码
-        int oldCount = userInfoMapper.checkPassword(MD5Util.MD5EncodeUtf8(oldPass), userInfo.getUserId());
+        //TODO 密码加密
+        log.info("【oldPass】= {}",passwordEncoder.encode(oldPass));
+        int oldCount = userInfoMapper.checkPassword(passwordEncoder.encode(oldPass), userId);
         if (oldCount == 0) {
             return ServerResponse.isError(UserEnum.OLD_PASS_WRONG.getMessage());
         }
@@ -117,8 +139,8 @@ public class UserServiceImpl implements IUserService {
             return ServerResponse.isError(UserEnum.NEW_PASS_SAME_AS_OLD.getMessage());
         }
         UserInfo updatePass = new UserInfo();
-        updatePass.setUserId(userInfo.getUserId());
-        updatePass.setUserPassword(MD5Util.MD5EncodeUtf8(newPass));
+        updatePass.setUserId(userId);
+        updatePass.setUserPassword(passwordEncoder.encode(newPass));
         int update = userInfoMapper.updateByPrimaryKeySelective(updatePass);
         if (update > 0) {
             return ServerResponse.isSuccess();
@@ -128,13 +150,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ServerResponse<UserInfo> getUserInfo(Integer userId) {
+    public ServerResponse<UserInfoVo> getUserInfo(Integer userId) {
         UserInfo userInfo = userInfoMapper.selectByPrimaryKey(userId);
         if (userInfo == null) {
-            return ServerResponse.isError();
+            throw new NotFoundException("user not found");
         }
-        userInfo.setUserPassword("");
-        return ServerResponse.isSuccess(userInfo);
+        UserInfoVo vo = new UserInfoVo();
+        BeanUtils.copyProperties(userInfo, vo);
+        return ServerResponse.isSuccess(vo);
     }
 
     @Override

@@ -2,26 +2,36 @@ package org.ylgzs.info.pojo;
 
 import lombok.ToString;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
+
 @ToString
 public class UserInfo {
+
+    @NotNull(message = "用户 ID 不能为空")
     private Integer userId;
 
+    @NotNull(message = "用户名不能为空")
     private String userLoginName;
 
     private String userPassword;
 
+    @NotNull(message = "姓名不能为空")
     private String userName;
 
+    @Email(message = "邮箱格式不正确")
     private String userEmail;
 
     private Integer userEmailConfirm;
 
+    @NotNull(message = "部门不能为空")
     private Integer departmentDepartmentId;
 
     private String gradeGradeId;
 
-    private Integer userRole;
+    @NotNull(message = "用户角色不能为空")
+    private String userRole;
 
     private String userInfoOpenId;
 
@@ -29,7 +39,7 @@ public class UserInfo {
 
     private Date userUpdateTime;
 
-    public UserInfo(Integer userId, String userLoginName, String userPassword, String userName, String userEmail, Integer userEmailConfirm, Integer departmentDepartmentId, String gradeGradeId, Integer userRole, String userInfoOpenId, Date userCreateTime, Date userUpdateTime) {
+    public UserInfo(Integer userId, String userLoginName, String userPassword, String userName, String userEmail, Integer userEmailConfirm, Integer departmentDepartmentId, String gradeGradeId, String userRole, String userInfoOpenId, Date userCreateTime, Date userUpdateTime) {
         this.userId = userId;
         this.userLoginName = userLoginName;
         this.userPassword = userPassword;
@@ -112,12 +122,12 @@ public class UserInfo {
         this.gradeGradeId = gradeGradeId == null ? null : gradeGradeId.trim();
     }
 
-    public Integer getUserRole() {
+    public String getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(Integer userRole) {
-        this.userRole = userRole;
+    public void setUserRole(String userRole) {
+        this.userRole = userRole == null ? null : userRole.trim();
     }
 
     public String getUserInfoOpenId() {

@@ -6,9 +6,6 @@ import org.ylgzs.info.pojo.UserInfo;
 
 import java.util.List;
 
-/**
- * @author alex
- */
 @Repository
 public interface UserInfoMapper {
     int deleteByPrimaryKey(Integer userId);
@@ -32,4 +29,6 @@ public interface UserInfoMapper {
     int checkPassword(@Param("pass")String pass, @Param("userId")Integer userId);
 
     List<UserInfo> selectList(@Param("gradeId")String gradeId, @Param("departmentId")Integer departmentId, @Param("role")Integer role);
+
+    UserInfo selectByUserLoginName(String userLoginName);
 }
