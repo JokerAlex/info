@@ -31,8 +31,10 @@ pagehelper:
   params: countSql
 
 
-
-
-pass:
-  salt: 123456
+# jwt
+jwt:
+  header: Authorization
+  secretKey: ylgzs_info
+  expiration: 604800
+  tokenHead: "Bearer "
 

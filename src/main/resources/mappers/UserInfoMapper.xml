@@ -11,7 +11,7 @@
             <arg column="user_email_confirm" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="department_department_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="grade_grade_id" jdbcType="CHAR" javaType="java.lang.String"/>
-            <arg column="user_role" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="user_role" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="user_info_open_id" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="user_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
             <arg column="user_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
@@ -40,7 +40,7 @@
       )
     values (#{userId,jdbcType=INTEGER}, #{userLoginName,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR}, 
       #{userName,jdbcType=VARCHAR}, #{userEmail,jdbcType=VARCHAR}, #{userEmailConfirm,jdbcType=INTEGER}, 
-      #{departmentDepartmentId,jdbcType=INTEGER}, #{gradeGradeId,jdbcType=CHAR}, #{userRole,jdbcType=INTEGER}, 
+      #{departmentDepartmentId,jdbcType=INTEGER}, #{gradeGradeId,jdbcType=CHAR}, #{userRole,jdbcType=VARCHAR}, 
       #{userInfoOpenId,jdbcType=VARCHAR}, now(), now()
       )
   </insert>
@@ -77,9 +77,7 @@
             <if test="userInfoOpenId != null">
                 user_info_open_id,
             </if>
-            <if test="userCreateTime != null">
-                user_create_time,
-            </if>
+                user_create_time
                 user_update_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -108,15 +106,13 @@
                 #{gradeGradeId,jdbcType=CHAR},
             </if>
             <if test="userRole != null">
-                #{userRole,jdbcType=INTEGER},
+                #{userRole,jdbcType=VARCHAR},
             </if>
             <if test="userInfoOpenId != null">
                 #{userInfoOpenId,jdbcType=VARCHAR},
             </if>
-            <if test="userCreateTime != null">
-                now(),
-            </if>
-                now()
+            now(),
+            now()
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.UserInfo">
@@ -144,7 +140,7 @@
                 grade_grade_id = #{gradeGradeId,jdbcType=CHAR},
             </if>
             <if test="userRole != null">
-                user_role = #{userRole,jdbcType=INTEGER},
+                user_role = #{userRole,jdbcType=VARCHAR},
             </if>
             <if test="userInfoOpenId != null">
                 user_info_open_id = #{userInfoOpenId,jdbcType=VARCHAR},
@@ -165,9 +161,9 @@
       user_email_confirm = #{userEmailConfirm,jdbcType=INTEGER},
       department_department_id = #{departmentDepartmentId,jdbcType=INTEGER},
       grade_grade_id = #{gradeGradeId,jdbcType=CHAR},
-      user_role = #{userRole,jdbcType=INTEGER},
+      user_role = #{userRole,jdbcType=VARCHAR},
       user_info_open_id = #{userInfoOpenId,jdbcType=VARCHAR},
-      user_create_time = #{userCreateTime,jdbcType=TIMESTAMP},
+      user_create_time = now(),
       user_update_time = now()
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
@@ -207,5 +203,12 @@
             <if test="role != null">user_role = #{role}</if>
         </where>
         order by user_id
+    </select>
+
+    <select id="selectByUserLoginName" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info
+        where user_login_name = #{userLoginName}
     </select>
 </mapper>

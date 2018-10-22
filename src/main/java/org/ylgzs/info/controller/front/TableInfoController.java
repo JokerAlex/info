@@ -1,9 +1,6 @@
 package org.ylgzs.info.controller.front;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,11 +40,10 @@ public class TableInfoController {
 
     @ApiOperation(value = "上传文件", notes = "检查表名是否可用")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "tableName", value = "表名", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = "file", value = "文件", required = true, dataTypeClass = MultipartFile.class)
+            @ApiImplicitParam(name = "tableName", value = "表名", required = true, dataTypeClass = String.class)
     })
     @PostMapping(value = "/import", headers = "content-type=multipart/form-data")
-    public ServerResponse importTableInfo(HttpServletRequest request, String tableName, MultipartFile file) {
+    public ServerResponse importTableInfo(HttpServletRequest request, String tableName, @ApiParam(value = "文件", required = true) MultipartFile file) {
         // TODO 通过request获取用户信息
         Integer userId = 1;
         return iTableService.importInfo(userId, tableName, file);

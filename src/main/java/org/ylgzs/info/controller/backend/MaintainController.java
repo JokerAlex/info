@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.ylgzs.info.pojo.Department;
 import org.ylgzs.info.service.IDepartmentService;
@@ -17,6 +18,7 @@ import org.ylgzs.info.vo.ServerResponse;
  * @Date 2018/10/1
  **/
 @RestController
+@PreAuthorize("hasAnyAuthority('ADMIN')")
 @RequestMapping(value = "/manage")
 @Api(description = "部门、年级信息管理")
 public class MaintainController {

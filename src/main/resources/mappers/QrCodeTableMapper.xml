@@ -106,7 +106,7 @@
         <constructor>
             <idArg column="table_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="table_info_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
-            <arg column="collection_name" jdbcType="VARCHAR" javaType="S=java.lang.String"/>
+            <arg column="collection_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="table_status" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
         </constructor>

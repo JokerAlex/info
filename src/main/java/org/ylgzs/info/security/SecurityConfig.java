@@ -73,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 由于使用的是JWT，我们这里不需要csrf
                 .csrf().disable()
 
-                //.exceptionHandling().authenticationEntryPoint(userAuthenticationEntryPoint).and()
+                .exceptionHandling().authenticationEntryPoint(userAuthenticationEntryPoint).and()
                 // 基于token，所以不需要session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // 添加JWT filter
@@ -82,7 +82,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 //.antMatchers("/swagger-resources/**","/swagger-ui.html/**","/v2/**").permitAll()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/login", "/register").permitAll()
+                // swagger start 页面访问403错误
+                .antMatchers("/swagger-ui.html").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/images/**").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+                .antMatchers("/v2/api-docs").permitAll()
+                .antMatchers("/configuration/ui").permitAll()
+                .antMatchers("/configuration/security").permitAll()
+                // swagger end
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

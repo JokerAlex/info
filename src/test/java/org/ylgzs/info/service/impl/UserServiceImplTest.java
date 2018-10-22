@@ -35,7 +35,7 @@ public class UserServiceImplTest {
         userInfo.setUserEmail("111@163.com");
         userInfo.setDepartmentDepartmentId(1);
         userInfo.setGradeGradeId("2016");
-        userInfo.setUserRole(0);
+        userInfo.setUserRole("USER");
         ServerResponse serverResponse = userService.register(userInfo);
         System.out.println(serverResponse.toString());
 
@@ -51,7 +51,6 @@ public class UserServiceImplTest {
         userInfo.setUserEmail("111@163.com");
         userInfo.setDepartmentDepartmentId(1);
         userInfo.setGradeGradeId("2016");
-        userInfo.setUserRole(0);
         ServerResponse serverResponse = userService.updateInformation(userInfo);
         System.out.println(serverResponse.toString());
     }
@@ -67,8 +66,7 @@ public class UserServiceImplTest {
         userInfo.setUserEmail("111@163.com");
         userInfo.setDepartmentDepartmentId(1);
         userInfo.setGradeGradeId("2016");
-        userInfo.setUserRole(0);
-        ServerResponse serverResponse = userService.resetPassword("123456","654321",userInfo);
+        ServerResponse serverResponse = userService.resetPassword("123456","654321",userInfo.getUserId());
         System.out.println(serverResponse.toString());
     }
 
