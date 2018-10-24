@@ -1,5 +1,6 @@
 package org.ylgzs.info.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 /**
@@ -9,6 +10,7 @@ import lombok.Data;
  * @Date 2018/10/7
  **/
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DepartmentVo {
     private Integer departmentId;
 

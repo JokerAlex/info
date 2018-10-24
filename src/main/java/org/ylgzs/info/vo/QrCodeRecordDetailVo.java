@@ -1,5 +1,6 @@
 package org.ylgzs.info.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * @Date 2018/10/7
  **/
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class QrCodeRecordDetailVo {
 
     private Integer qrcodeRecordId;
