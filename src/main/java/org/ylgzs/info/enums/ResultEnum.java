@@ -24,7 +24,7 @@ public enum ResultEnum {
     /**
      * 统一回复，非法参数
      */
-    ILLEGAL_PARAMETER(2, "非法参数"),
+    ILLEGAL_PARAMETER(2, "参数错误"),
 
     ;
 
