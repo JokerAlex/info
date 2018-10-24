@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import org.ylgzs.info.dao.TableInfoMapper;
 import org.ylgzs.info.dao.UserInfoMapper;
 import org.ylgzs.info.enums.ResultEnum;
 import org.ylgzs.info.enums.TableEnum;
+import org.ylgzs.info.exception.ParameterErrorException;
+import org.ylgzs.info.exception.TableException;
 import org.ylgzs.info.pojo.TableInfo;
 import org.ylgzs.info.pojo.TableInfoKey;
 import org.ylgzs.info.pojo.UserInfo;
@@ -59,7 +62,7 @@ public class TableServiceImpl implements ITableService {
     @Override
     public ServerResponse<String> checkTableName(Integer userId, String tableName) {
         if (userId == null || tableName == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         int count = tableInfoMapper.checkTableName(userId, tableName);
         if (count > 0) {
@@ -70,10 +73,10 @@ public class TableServiceImpl implements ITableService {
 
 
     @Override
-    @Transactional
-    public ServerResponse importInfo(Integer userId, String tableName, MultipartFile multipartFile) {
+    @Transactional(rollbackFor = TableException.class)
+    public ServerResponse importInfo(Integer userId, String tableName, MultipartFile multipartFile) throws TableException{
         if (multipartFile == null || userId == null || tableName == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         //检查 tableName 是否可用
         ServerResponse<String> checkTable = this.checkTableName(userId, tableName);
@@ -86,52 +89,51 @@ public class TableServiceImpl implements ITableService {
         //判断文件类型
         //读取文件内容并存储
         //tableInfo 插入
-        if (fileName.substring(fileName.lastIndexOf(ExcelUtil.POINT)).equals(ExcelUtil.EXCEL_2003L)
-                || fileName.substring(fileName.lastIndexOf(ExcelUtil.POINT)).equals(ExcelUtil.EXCEL_2007U)) {
-            try {
-                //读取文件内容并存储
-                List<Document> documentList = ExcelUtil.readByDocument(multipartFile.getInputStream());
-                String collectionName = userId + "_" + UUID.randomUUID().toString().replaceAll("-", "_");
-                mongoTemplate.createCollection(collectionName);
-                MongoCollection<Document> mongoCollection = mongoTemplate.getCollection(collectionName);
-                mongoCollection.insertMany(documentList);
+        if (!fileName.substring(fileName.lastIndexOf(ExcelUtil.POINT)).equals(ExcelUtil.EXCEL_2003L)
+                && !fileName.substring(fileName.lastIndexOf(ExcelUtil.POINT)).equals(ExcelUtil.EXCEL_2007U)) {
+            return ServerResponse.isError(TableEnum.ILLEGAL_FILE_TYPE.getMessage());
+        }
+        try {
+            //读取文件内容并存储
+            List<Document> documentList = ExcelUtil.readByDocument(multipartFile.getInputStream());
+            String collectionName = userId + "_" + UUID.randomUUID().toString().replaceAll("-", "_");
+            mongoTemplate.createCollection(collectionName);
+            MongoCollection<Document> mongoCollection = mongoTemplate.getCollection(collectionName);
+            mongoCollection.insertMany(documentList);
 
-                //tableInfo 插入
-                TableInfo tableInfo = new TableInfo();
-                tableInfo.setUserUserId(userId);
-                tableInfo.setTableInfoName(tableName);
-                tableInfo.setCollectionName(collectionName);
-                log.info("【插入 tableInfo 】tableInfo = {}",tableInfo.toString());
-                int count = tableInfoMapper.insertSelective(tableInfo);
-                log.info("【插入 tableInfo 】count = {}",count);
-                if (count > 0) {
-                    return ServerResponse.isSuccess();
-                }
-                return ServerResponse.isError(TableEnum.UPDATE_TABLE_INFO_ERROR.getMessage());
-            } catch (IOException ioe) {
-                log.error("文件读取错误 = {}", ioe.getMessage());
-                return ServerResponse.isError(TableEnum.READ_FILE_ERROR.getMessage());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return ServerResponse.isError(TableEnum.SAVE_FILE_ERROR.getMessage());
+            //tableInfo 插入
+            TableInfo tableInfo = new TableInfo();
+            tableInfo.setUserUserId(userId);
+            tableInfo.setTableInfoName(tableName);
+            tableInfo.setCollectionName(collectionName);
+            log.info("【插入 tableInfo 】tableInfo = {}", tableInfo.toString());
+            int count = tableInfoMapper.insertSelective(tableInfo);
+            log.info("【插入 tableInfo 】count = {}", count);
+            if (count > 0) {
+                TableInfoDetailVo vo = new TableInfoDetailVo();
+                BeanUtils.copyProperties(tableInfo, vo);
+                return ServerResponse.isSuccess(vo);
             }
-        } else {
-    return ServerResponse.isError(TableEnum.ILLEGAL_FILE_TYPE.getMessage());
-}
-
+        } catch (IOException ioe) {
+            log.error("文件读取错误 = {}", ioe.getMessage());
+            throw new TableException(TableEnum.READ_FILE_ERROR.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new TableException(TableEnum.SAVE_FILE_ERROR.getMessage());
+        }
+        throw new TableException(TableEnum.UPDATE_TABLE_INFO_ERROR.getMessage());
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = TableException.class)
     public ServerResponse<String> updateTableInfo(Integer userId, TableInfo tableInfo) {
         if (userId == null || tableInfo == null || !userId.equals(tableInfo.getUserUserId()) || tableInfo.getTableInfoId() == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         //可更新字段->表名、描述、查询列
         TableInfo update = new TableInfo();
         update.setTableInfoId(tableInfo.getTableInfoId());
         update.setUserUserId(userId);
-        update.setTableInfoName(tableInfo.getTableInfoName());
         update.setTableInfoDescription(tableInfo.getTableInfoDescription());
         update.setTableInfoQueryCol(tableInfo.getTableInfoQueryCol());
         log.info("【更新 tableInfo】tableInfo = {}", update.toString());
@@ -141,42 +143,44 @@ public class TableServiceImpl implements ITableService {
         if (count > 0) {
             return ServerResponse.isSuccess();
         }
-        return ServerResponse.isError(TableEnum.UPDATE_TABLE_INFO_ERROR.getMessage());
+        throw new TableException(TableEnum.UPDATE_TABLE_INFO_ERROR.getMessage());
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = TableException.class)
     public ServerResponse<String> delTableInfo(Integer userId, Integer tableInfoId) {
         if (tableInfoId == null || userId == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         //删除mongoDB里的表
         log.info("【删除表格】userId = {}, tableInfoId = {}", userId, tableInfoId);
-        TableInfoKey tableInfoKey = new TableInfoKey(userId,tableInfoId);
+        TableInfoKey tableInfoKey = new TableInfoKey(tableInfoId, userId);
         TableInfo tableInfo = tableInfoMapper.selectByPrimaryKey(tableInfoKey);
         mongoTemplate.dropCollection(tableInfo.getCollectionName());
         //删除表信息
         int count = tableInfoMapper.deleteByPrimaryKey(tableInfoKey);
+        //TODO 修改删除方式
         int codeCount = qrCodeTableMapper.updateStatus(tableInfoId, QrCodeConst.STATUS_OFF);
         log.info("【删除表格】count = {}, codeCount = {}", count, codeCount);
-        if (count > 0 && codeCount > 0) {
+        if (count > 0) {
             return ServerResponse.isSuccess();
         }
-        return ServerResponse.isError(TableEnum.DEL_TABLE_INFO_ERROR.getMessage());
+        throw new TableException(TableEnum.DEL_TABLE_INFO_ERROR.getMessage());
 
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = TableException.class)
     public ServerResponse<String> delTableInfoBatch(List<Integer> tableInfoIds) {
         if (tableInfoIds.isEmpty()) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         log.info("【删除表格】tableInfoIds = {}", tableInfoIds.toString());
         List<String> collectionNames = tableInfoMapper.listByTableInfoIds(tableInfoIds).stream()
                 .map(TableInfo::getCollectionName)
                 .collect(Collectors.toList());
         //删除mongoDB里的表
+        //TODO 删除方式优化
         collectionNames.forEach(mongoTemplate::dropCollection);
         int tableCount = tableInfoMapper.deleteByTableInfoIdBatch(tableInfoIds);
         int codeCount = qrCodeTableMapper.updateStatusBatch(tableInfoIds, QrCodeConst.STATUS_OFF);
@@ -184,13 +188,13 @@ public class TableServiceImpl implements ITableService {
         if (tableCount > 0 && codeCount > 0) {
             return ServerResponse.isSuccess();
         }
-        return ServerResponse.isError(TableEnum.DEL_TABLE_INFO_ERROR.getMessage());
+        throw new TableException(TableEnum.DEL_TABLE_INFO_ERROR.getMessage());
     }
 
     @Override
     public ServerResponse<PageInfo> listTableInfo(Integer pageNum, Integer pageSize, Integer userId, String gradeId, Integer departmentId) {
         if (pageNum == null || pageSize == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         //获取表格信息
         PageHelper.startPage(pageNum, pageSize);
@@ -213,11 +217,11 @@ public class TableServiceImpl implements ITableService {
     @Override
     public ServerResponse<TableInfoDetailVo> getTableInfoDetail(TableInfoKey tableInfoKey) {
         if (tableInfoKey == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         TableInfo tableInfo = tableInfoMapper.selectByPrimaryKey(tableInfoKey);
         if (tableInfo == null) {
-            return ServerResponse.isError(TableEnum.NOT_FOUND.getMessage());
+            throw new TableException(TableEnum.NOT_FOUND.getMessage());
         }
         UserInfo userInfo = userInfoMapper.selectByPrimaryKey(tableInfoKey.getUserUserId());
         TableInfoDetailVo tableInfoDetailVo = new TableInfoDetailVo(tableInfo.getTableInfoId(),

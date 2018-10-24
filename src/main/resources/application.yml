@@ -12,8 +12,9 @@ spring:
       max-request-size: 10Mb
       max-file-size: 2Mb
 
-
-
+server:
+  servlet:
+    context-path: /api
 
 
 # mybatis 配置
