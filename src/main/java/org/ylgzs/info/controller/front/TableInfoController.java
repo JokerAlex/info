@@ -106,4 +106,17 @@ public class TableInfoController {
         TableInfoKey tableInfoKey = new TableInfoKey(tableId, userId);
         return iTableService.getTableInfoDetail(tableInfoKey);
     }
+
+    @ApiOperation(value = "信息查询", notes = "信息查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "collectionName", value = "集合名称", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = "field1", value = "字段1", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = "value1", value = "值1", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = "field2", value = "字段2", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = "value2", value = "值2", required = true, dataTypeClass = String.class)
+    })
+    @GetMapping("/find")
+    public ServerResponse find(String collectionName,String field1, String value1,String field2, String value2) {
+        return iTableService.find(collectionName, field1, value1, field2, value2);
+    }
 }

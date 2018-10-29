@@ -8,6 +8,9 @@ import org.bson.Document;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -18,6 +21,7 @@ import org.ylgzs.info.dao.TableInfoMapper;
 import org.ylgzs.info.dao.UserInfoMapper;
 import org.ylgzs.info.enums.ResultEnum;
 import org.ylgzs.info.enums.TableEnum;
+import org.ylgzs.info.exception.NotFoundException;
 import org.ylgzs.info.exception.ParameterErrorException;
 import org.ylgzs.info.exception.TableException;
 import org.ylgzs.info.pojo.TableInfo;
@@ -31,9 +35,7 @@ import org.ylgzs.info.vo.TableInfoDetailVo;
 import org.ylgzs.info.vo.TableInfoListVo;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +52,7 @@ public class TableServiceImpl implements ITableService {
     private final TableInfoMapper tableInfoMapper;
     private final UserInfoMapper userInfoMapper;
     private final QrCodeTableMapper qrCodeTableMapper;
+    private final static String isNullStr = "null";
 
     @Autowired
     public TableServiceImpl(MongoTemplate mongoTemplate, TableInfoMapper tableInfoMapper, UserInfoMapper userInfoMapper, QrCodeTableMapper qrCodeTableMapper) {
@@ -60,7 +63,7 @@ public class TableServiceImpl implements ITableService {
     }
 
     @Override
-    public ServerResponse<String> checkTableName(Integer userId, String tableName) {
+    public ServerResponse<String> checkTableName(Integer userId, String tableName) throws ParameterErrorException {
         if (userId == null || tableName == null) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
@@ -74,7 +77,7 @@ public class TableServiceImpl implements ITableService {
 
     @Override
     @Transactional(rollbackFor = TableException.class)
-    public ServerResponse importInfo(Integer userId, String tableName, MultipartFile multipartFile) throws TableException{
+    public ServerResponse importInfo(Integer userId, String tableName, MultipartFile multipartFile) throws ParameterErrorException, TableException{
         if (multipartFile == null || userId == null || tableName == null) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
@@ -126,7 +129,7 @@ public class TableServiceImpl implements ITableService {
 
     @Override
     @Transactional(rollbackFor = TableException.class)
-    public ServerResponse<String> updateTableInfo(Integer userId, TableInfo tableInfo) {
+    public ServerResponse<String> updateTableInfo(Integer userId, TableInfo tableInfo) throws ParameterErrorException, TableException {
         if (userId == null || tableInfo == null || !userId.equals(tableInfo.getUserUserId()) || tableInfo.getTableInfoId() == null) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
@@ -148,7 +151,7 @@ public class TableServiceImpl implements ITableService {
 
     @Override
     @Transactional(rollbackFor = TableException.class)
-    public ServerResponse<String> delTableInfo(Integer userId, Integer tableInfoId) {
+    public ServerResponse<String> delTableInfo(Integer userId, Integer tableInfoId) throws ParameterErrorException, TableException {
         if (tableInfoId == null || userId == null) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
@@ -171,7 +174,7 @@ public class TableServiceImpl implements ITableService {
 
     @Override
     @Transactional(rollbackFor = TableException.class)
-    public ServerResponse<String> delTableInfoBatch(List<Integer> tableInfoIds) {
+    public ServerResponse<String> delTableInfoBatch(List<Integer> tableInfoIds) throws ParameterErrorException, TableException {
         if (tableInfoIds.isEmpty()) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
@@ -185,14 +188,14 @@ public class TableServiceImpl implements ITableService {
         int tableCount = tableInfoMapper.deleteByTableInfoIdBatch(tableInfoIds);
         int codeCount = qrCodeTableMapper.updateStatusBatch(tableInfoIds, QrCodeConst.STATUS_OFF);
         log.info("【删除表格】tableCount = {}, codeCount = {}", tableCount, codeCount);
-        if (tableCount > 0 && codeCount > 0) {
+        if (tableCount > 0) {
             return ServerResponse.isSuccess();
         }
         throw new TableException(TableEnum.DEL_TABLE_INFO_ERROR.getMessage());
     }
 
     @Override
-    public ServerResponse<PageInfo> listTableInfo(Integer pageNum, Integer pageSize, Integer userId, String gradeId, Integer departmentId) {
+    public ServerResponse<PageInfo> listTableInfo(Integer pageNum, Integer pageSize, Integer userId, String gradeId, Integer departmentId) throws ParameterErrorException {
         if (pageNum == null || pageSize == null) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
@@ -233,5 +236,33 @@ public class TableServiceImpl implements ITableService {
                 DateTimeUtil.dateToStr(tableInfo.getTableInfoCreateTime()),
                 DateTimeUtil.dateToStr(tableInfo.getTableInfoUpdateTime()));
         return ServerResponse.isSuccess(tableInfoDetailVo);
+    }
+
+    @Override
+    public ServerResponse find(String collectionName, String field1, String value1, String field2, String value2) throws NotFoundException {
+        if (isNullStr.equals(collectionName) || isNullStr.equals(field1)) {
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+        }
+        Query query = new Query(Criteria.where(field1).is(value1));
+        if (!isNullStr.equals(field2)) {
+            query.addCriteria(Criteria.where(field2).is(value2));
+        }
+        Object object = mongoTemplate.findOne(query, Object.class, collectionName);
+        if (object == null) {
+            throw new NotFoundException("没有查询到" + value1 + "," + value2 + "的相关结果");
+        }
+        //处理结果集
+        String[] strings = object.toString().replace("{","").split(",");
+        List<String> list = new ArrayList<>(strings.length);
+        Collections.addAll(list, strings);
+        Map<String, String> map = new LinkedHashMap<>();
+        for (String s : list) {
+            if (s.contains("NULL")) {
+                continue;
+            }
+            map.put(s.substring(0, s.indexOf("=")).trim(), s.substring(s.indexOf("=") + 1).trim());
+        }
+        map.remove("_id");
+        return ServerResponse.isSuccess(map);
     }
 }

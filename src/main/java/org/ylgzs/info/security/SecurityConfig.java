@@ -82,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 //.antMatchers("/swagger-resources/**","/swagger-ui.html/**","/v2/**").permitAll()
-                .antMatchers("/login", "/register").permitAll()
+                .antMatchers("/login", "/register","/table/find").permitAll()
                 // swagger start 页面访问403错误
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/swagger-resources/**").permitAll()

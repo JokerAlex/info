@@ -74,4 +74,15 @@ public interface ITableService {
      */
     ServerResponse<TableInfoDetailVo> getTableInfoDetail(TableInfoKey tableInfoKey);
 
+    /**
+     * 信息查询
+     * @param collectionName
+     * @param field1
+     * @param value1
+     * @param field2
+     * @param value2
+     * @return
+     */
+    ServerResponse find(String collectionName, String field1, String value1, String field2, String value2);
+
 }
