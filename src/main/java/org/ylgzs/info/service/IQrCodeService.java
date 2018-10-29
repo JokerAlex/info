@@ -16,6 +16,14 @@ import java.util.List;
 public interface IQrCodeService {
 
     /**
+     * 校验发布记录名称
+     * @param userId
+     * @param qrName
+     * @return
+     */
+    ServerResponse<String> checkQrName(Integer userId, String qrName);
+
+    /**
      *新增发布记录
      * @param userId
      * @param qrName
@@ -31,7 +39,7 @@ public interface IQrCodeService {
      * @param qrCodeRecord
      * @return
      */
-    ServerResponse<String> updateRecode(Integer userId, QrCodeRecord qrCodeRecord);
+    ServerResponse<String> updateRecord(Integer userId, QrCodeRecord qrCodeRecord);
 
     /**
      * 修改发布记录查询状态
@@ -40,7 +48,7 @@ public interface IQrCodeService {
      * @param status
      * @return
      */
-    ServerResponse<String> updataStatus(Integer userId, Integer recodeId, Integer status);
+    ServerResponse<String> updateStatus(Integer userId, Integer recodeId, Integer status);
 
     /**
      * 删除发布记录
@@ -64,7 +72,7 @@ public interface IQrCodeService {
      * @param userId
      * @return
      */
-    ServerResponse<PageInfo> listRecode(Integer pageNum, Integer pageSize, Integer userId);
+    ServerResponse<PageInfo> listRecord(Integer pageNum, Integer pageSize, Integer userId);
 
     /**
      * 获取发布记录详情
@@ -72,12 +80,12 @@ public interface IQrCodeService {
      * @param recodeId
      * @return
      */
-    ServerResponse<QrCodeRecordDetailVo> getRecodeDetail(Integer userId, Integer recodeId);
+    ServerResponse<QrCodeRecordDetailVo> getRecordDetail(Integer userId, Integer recodeId);
 
     /**
      * 外放查询使用
      * @param recordCode
      * @return
      */
-    ServerResponse<QrCodeRecordDetailVo> getRecodeDetail(String recordCode);
+    ServerResponse<QrCodeRecordDetailVo> getRecordDetail(String recordCode);
 }

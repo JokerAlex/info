@@ -143,4 +143,10 @@
             #{item}
         </foreach>
     </delete>
+
+    <select id="checkQrName" resultType="int" parameterType="map">
+        select count(1)
+        from qrcode_record
+        where user_user_id = #{userId} and qrcode_record_name = #{qrName}
+    </select>
 </mapper>

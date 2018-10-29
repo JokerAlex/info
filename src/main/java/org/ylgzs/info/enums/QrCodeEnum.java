@@ -12,6 +12,11 @@ import lombok.Getter;
 public enum QrCodeEnum {
 
     /**
+     *检验名称
+     */
+    INVALID_TABLE_NAME("该名称已存在"),
+
+    /**
      * 发布记录
      */
     RECODE_SAVE_ERROR("新增发布记录失败"),

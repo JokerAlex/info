@@ -13,6 +13,9 @@ import org.ylgzs.info.dao.QrCodeTableMapper;
 import org.ylgzs.info.dto.RecordTableDetailDTO;
 import org.ylgzs.info.enums.QrCodeEnum;
 import org.ylgzs.info.enums.ResultEnum;
+import org.ylgzs.info.exception.NotFoundException;
+import org.ylgzs.info.exception.ParameterErrorException;
+import org.ylgzs.info.exception.QrCodeException;
 import org.ylgzs.info.pojo.QrCodeRecord;
 import org.ylgzs.info.pojo.QrCodeRecordKey;
 import org.ylgzs.info.service.IQrCodeService;
@@ -52,13 +55,27 @@ public class QrCodeServiceImpl implements IQrCodeService {
      * 修改发布列表
      * */
 
-
+    @Override
+    public ServerResponse<String> checkQrName(Integer userId, String qrName) {
+        if (userId == null || qrName == null) {
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+        }
+        int count = qrCodeRecordMapper.checkQrName(userId, qrName);
+        if (count > 0) {
+            return ServerResponse.isError(QrCodeEnum.INVALID_TABLE_NAME.getMessage());
+        }
+        return ServerResponse.isSuccess();
+    }
 
     @Override
-    @Transactional
-    public ServerResponse<String> addQrCode(Integer userId,String qrName,String description, List<Integer> tableIds) {
+    @Transactional(rollbackFor = QrCodeException.class)
+    public ServerResponse<String> addQrCode(Integer userId,String qrName,String description, List<Integer> tableIds) throws ParameterErrorException, QrCodeException {
         if (userId == null || tableIds == null || tableIds.size() == 0 || qrName == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+        }
+        ServerResponse<String> check = this.checkQrName(userId, qrName);
+        if (!check.isOk()) {
+            return check;
         }
         log.info("【插入QrCode】 qrName = {}", qrName);
         //生成 code
@@ -72,21 +89,18 @@ public class QrCodeServiceImpl implements IQrCodeService {
         //插入发布记录
         int qrCount = qrCodeRecordMapper.insertSelective(qrCodeRecord);
         log.info("【插入QrCodeRecode】qrCount = {}", qrCount);
-        if (qrCount <= 0) {
-            return ServerResponse.isError(QrCodeEnum.RECODE_SAVE_ERROR.getMessage());
-        }
         //插入发布记录与表的关联信息
         int qrTableCount = qrCodeTableMapper.insertSelectiveBatch(qrCodeRecord.getQrcodeRecordId(), tableIds);
         log.info("【插入QrCodeTable】qrTableCount = {}", qrTableCount);
-        if (qrTableCount != tableIds.size()) {
-            return ServerResponse.isError(QrCodeEnum.RECODE_SAVE_ERROR.getMessage());
+        if (qrCount <= 0 || qrTableCount != tableIds.size()) {
+            throw new QrCodeException(QrCodeEnum.RECODE_SAVE_ERROR.getMessage());
         }
         return ServerResponse.isSuccess();
     }
 
     @Override
-    @Transactional
-    public ServerResponse<String> updateRecode(Integer userId, QrCodeRecord qrCodeRecord) {
+    @Transactional(rollbackFor = QrCodeException.class)
+    public ServerResponse<String> updateRecord(Integer userId, QrCodeRecord qrCodeRecord) throws ParameterErrorException, QrCodeException {
         if (userId == null || qrCodeRecord == null || qrCodeRecord.getQrcodeRecordId() == null || !userId.equals(qrCodeRecord.getUserUserId())) {
             return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
@@ -96,23 +110,22 @@ public class QrCodeServiceImpl implements IQrCodeService {
         update.setUserUserId(qrCodeRecord.getUserUserId());
         update.setQrcodeRecordName(qrCodeRecord.getQrcodeRecordName());
         update.setQrcodeRecordDescription(qrCodeRecord.getQrcodeRecordDescription());
-        log.info("【更新 recode】recode = {}", qrCodeRecord.toString());
         int count = qrCodeRecordMapper.updateByPrimaryKeySelective(update);
         log.info("【更新 recode】count = {}", count);
         if (count > 0) {
             return ServerResponse.isSuccess();
         }
-        return ServerResponse.isError(QrCodeEnum.UPDATE_RECODE_ERROR.getMessage());
+        throw new QrCodeException(QrCodeEnum.UPDATE_RECODE_ERROR.getMessage());
     }
 
     @Override
-    @Transactional
-    public ServerResponse<String> updataStatus(Integer userId, Integer recodeId, Integer status) {
+    @Transactional(rollbackFor = QrCodeException.class)
+    public ServerResponse<String> updateStatus(Integer userId, Integer recodeId, Integer status) throws ParameterErrorException, QrCodeException {
         if (userId == null || recodeId == null || status == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         if (!QrCodeConst.STATUS_ON.equals(status) && !QrCodeConst.STATUS_OFF.equals(status)) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
 
         QrCodeRecord update = new QrCodeRecord();
@@ -126,50 +139,48 @@ public class QrCodeServiceImpl implements IQrCodeService {
         if (count > 0) {
             return ServerResponse.isSuccess();
         }
-        return ServerResponse.isError(QrCodeEnum.UPDATE_STATUS_ERROR.getMessage());
+        throw new QrCodeException(QrCodeEnum.UPDATE_STATUS_ERROR.getMessage());
     }
 
     @Override
-    @Transactional
-    public ServerResponse<String> delRecord(Integer userId, Integer recordId) {
+    @Transactional(rollbackFor = QrCodeException.class)
+    public ServerResponse<String> delRecord(Integer userId, Integer recordId) throws ParameterErrorException, QrCodeException {
         if (userId == null || recordId == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         log.info("【删除记录】 recordId = {}", recordId);
         int tableCount = qrCodeTableMapper.deleteByQrCodeId(recordId);
-        log.info("【删除记录】 tableCount = {}", tableCount);
 
         QrCodeRecordKey qrCodeRecordKey = new QrCodeRecordKey(recordId, userId);
         int recordCount = qrCodeRecordMapper.deleteByPrimaryKey(qrCodeRecordKey);
-        log.info("【删除记录】 recodeCount = {}", recordCount);
+        log.info("【删除记录】tableCount = {}, recodeCount = {}", tableCount, recordCount);
         if (tableCount > 0 && recordCount > 0) {
             return ServerResponse.isSuccess();
         }
-        return ServerResponse.isError(QrCodeEnum.DEL_RECODE_ERROR.getMessage());
+        throw new QrCodeException(QrCodeEnum.DEL_RECODE_ERROR.getMessage());
     }
 
     @Override
-    @Transactional
-    public ServerResponse<String> delRecordBatch(List<Integer> recordIds) {
+    @Transactional(rollbackFor = QrCodeException.class)
+    public ServerResponse<String> delRecordBatch(List<Integer> recordIds) throws ParameterErrorException, QrCodeException {
         if (recordIds.isEmpty()) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
-        log.info("【批量删除发布记录】recordIds = {}", recordIds);
+        log.info("【批量删除发布记录】recordIds = {}", recordIds.toString());
         int tableCount = qrCodeTableMapper.deleteByQrCodeIdBatch(recordIds);
-        log.info("【批量删除发布记录】tableCount = {}", tableCount);
 
         int recordCount = qrCodeRecordMapper.deleteByQrCodeRecoedIdBatch(recordIds);
-        log.info("【批量删除发布记录】recordCount = {}", recordCount);
+        log.info("【批量删除发布记录】tableCount = {}, recodeCount = {}", tableCount, recordCount);
         if (tableCount > 0 && recordCount > 0) {
             return ServerResponse.isSuccess();
         }
-        return ServerResponse.isError(QrCodeEnum.DEL_RECODE_ERROR.getMessage());
+        throw new QrCodeException(QrCodeEnum.DEL_RECODE_ERROR.getMessage());
     }
 
     @Override
-    public ServerResponse<PageInfo> listRecode(Integer pageNum, Integer pageSize, Integer userId) {
+    public ServerResponse<PageInfo> listRecord(Integer pageNum, Integer pageSize, Integer userId) throws ParameterErrorException {
         if (pageNum == null || pageSize == null || userId == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         //获取列表
         log.info("【获取发布记录列表】pageNum = {}, pageSize = {}, userId = {}", pageNum, pageSize, userId);
@@ -192,20 +203,20 @@ public class QrCodeServiceImpl implements IQrCodeService {
     }
 
     @Override
-    public ServerResponse<QrCodeRecordDetailVo> getRecodeDetail(Integer userId, Integer recodeId) {
+    public ServerResponse<QrCodeRecordDetailVo> getRecordDetail(Integer userId, Integer recodeId) throws ParameterErrorException {
         if (userId == null || recodeId == null) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         log.info("【获取发布记录详情】 userId = {}, recodeId = {}", userId, recodeId);
         QrCodeRecordKey qrCodeRecordKey = new QrCodeRecordKey(recodeId, userId);
         QrCodeRecord record = qrCodeRecordMapper.selectByPrimaryKey(qrCodeRecordKey);
         if (record == null) {
-            return ServerResponse.isError(QrCodeEnum.GET_DETAIL_ERROR.getMessage());
+            throw new ParameterErrorException(QrCodeEnum.GET_DETAIL_ERROR.getMessage());
         }
         //获取所有表格 id、表名、插入时间、状态
         List<RecordTableDetailDTO> tableDetailDTOS = qrCodeTableMapper.selectByCodeId(recodeId);
         if (tableDetailDTOS == null) {
-            return ServerResponse.isError(QrCodeEnum.GET_DETAIL_ERROR.getMessage());
+            throw new NotFoundException(QrCodeEnum.GET_DETAIL_ERROR.getMessage());
         }
         List<RecordTableVo> tableVos = tableDetailDTOS.stream()
                 .sorted(Comparator.comparing(RecordTableDetailDTO::getUpdateTime).reversed())
@@ -232,9 +243,9 @@ public class QrCodeServiceImpl implements IQrCodeService {
     }
 
     @Override
-    public ServerResponse<QrCodeRecordDetailVo> getRecodeDetail(String recordCode) {
+    public ServerResponse<QrCodeRecordDetailVo> getRecordDetail(String recordCode) throws ParameterErrorException {
         if (StringUtils.isEmpty(recordCode)) {
-            return ServerResponse.isError(ResultEnum.ILLEGAL_PARAMETER.getMessage());
+            throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         log.info("【发布记录码】 recordCode = {}", recordCode);
         QrCodeRecord record = qrCodeRecordMapper.selectByRecordCode(recordCode);

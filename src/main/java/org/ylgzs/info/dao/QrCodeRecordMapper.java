@@ -1,5 +1,6 @@
 package org.ylgzs.info.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import org.ylgzs.info.pojo.QrCodeRecord;
 import org.ylgzs.info.pojo.QrCodeRecordKey;
@@ -25,4 +26,6 @@ public interface QrCodeRecordMapper {
     QrCodeRecord selectByRecordCode(String recordCode);
 
     int deleteByQrCodeRecoedIdBatch(List<Integer> list);
+
+    int checkQrName(@Param("userId") Integer userId,@Param("qrName") String qrName);
 }
