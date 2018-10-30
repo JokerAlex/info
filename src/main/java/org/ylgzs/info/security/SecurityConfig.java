@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.ylgzs.info.security.entrypoint.UserAuthenticationEntryPoint;
 import org.ylgzs.info.security.filter.UserAuthenticationTokenFilter;
+import org.ylgzs.info.security.handler.UserAccessDeniedHandler;
 import org.ylgzs.info.security.handler.UserAuthenticationFailureHandler;
 import org.ylgzs.info.security.handler.UserAuthenticationSuccessHandler;
 
@@ -34,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final UserAuthenticationSuccessHandler authenticationSuccessHandler;
     private final UserAuthenticationFailureHandler authenticationFailureHandler;
+    private final UserAccessDeniedHandler userAccessDeniedHandler;
     private final UserAuthenticationEntryPoint userAuthenticationEntryPoint;
     private final UserAuthenticationTokenFilter userAuthenticationTokenFilter;
 
@@ -41,11 +43,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SecurityConfig(UserDetailsService userDetailsService,
                           UserAuthenticationSuccessHandler authenticationSuccessHandler,
                           UserAuthenticationFailureHandler authenticationFailureHandler,
+                          UserAccessDeniedHandler userAccessDeniedHandler,
                           UserAuthenticationEntryPoint userAuthenticationEntryPoint,
                           UserAuthenticationTokenFilter userAuthenticationTokenFilter) {
         this.userDetailsService = userDetailsService;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.authenticationFailureHandler = authenticationFailureHandler;
+        this.userAccessDeniedHandler = userAccessDeniedHandler;
         this.userAuthenticationEntryPoint = userAuthenticationEntryPoint;
         this.userAuthenticationTokenFilter = userAuthenticationTokenFilter;
     }
@@ -73,24 +77,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 由于使用的是JWT，我们这里不需要csrf
                 .csrf().disable()
 
-                .exceptionHandling().authenticationEntryPoint(userAuthenticationEntryPoint).and()
+                .exceptionHandling()
+                .authenticationEntryPoint(userAuthenticationEntryPoint)
+                .accessDeniedHandler(userAccessDeniedHandler)
+                .and()
                 // 基于token，所以不需要session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // 添加JWT filter
                 .addFilterBefore(userAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .authorizeRequests()
-                //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                //.antMatchers("/swagger-resources/**","/swagger-ui.html/**","/v2/**").permitAll()
-                .antMatchers("/login", "/register","/table/find").permitAll()
+                .antMatchers("/login",
+                        "/register",
+                        "/table/find").permitAll()
                 // swagger start 页面访问403错误
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/images/**").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/v2/api-docs").permitAll()
-                .antMatchers("/configuration/ui").permitAll()
-                .antMatchers("/configuration/security").permitAll()
+                .antMatchers("/swagger-ui.html",
+                        "/swagger-resources/**",
+                        "/images/**",
+                        "/webjars/**",
+                        "/v2/api-docs",
+                        "/configuration/ui",
+                        "/configuration/security").permitAll()
                 // swagger end
                 .anyRequest().authenticated()
                 .and()
