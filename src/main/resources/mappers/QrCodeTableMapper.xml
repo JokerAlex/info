@@ -5,14 +5,13 @@
         <constructor>
             <idArg column="qrcode_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <idArg column="table_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
-            <arg column="table_status" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
             <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
-    qrcode_id, table_id, table_status, create_time, update_time
-  </sql>
+        qrcode_id, table_id, create_time, update_time
+    </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="org.ylgzs.info.pojo.QrCodeTableKey">
         select
         <include refid="Base_Column_List"/>
@@ -21,16 +20,18 @@
         and table_id = #{tableId,jdbcType=INTEGER}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="org.ylgzs.info.pojo.QrCodeTableKey">
-    delete from qrcode_table
-    where qrcode_id = #{qrcodeId,jdbcType=INTEGER}
-      and table_id = #{tableId,jdbcType=INTEGER}
-  </delete>
+        delete
+        from qrcode_table
+        where qrcode_id = #{qrcodeId,jdbcType=INTEGER}
+          and table_id = #{tableId,jdbcType=INTEGER}
+    </delete>
     <insert id="insert" parameterType="org.ylgzs.info.pojo.QrCodeTable">
-    insert into qrcode_table (qrcode_id, table_id, table_status, 
-      create_time, update_time)
-    values (#{qrcodeId,jdbcType=INTEGER}, #{tableId,jdbcType=INTEGER}, #{tableStatus,jdbcType=INTEGER}, 
-      now(),now())
-  </insert>
+        insert into qrcode_table (qrcode_id, table_id, create_time, update_time)
+        values (#{qrcodeId,jdbcType=INTEGER},
+                #{tableId,jdbcType=INTEGER},
+                now(),
+                now())
+    </insert>
     <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.QrCodeTable">
         insert into qrcode_table
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -40,11 +41,8 @@
             <if test="tableId != null">
                 table_id,
             </if>
-            <if test="tableStatus != null">
-                table_status,
-            </if>
-            create_time,
-            update_time
+                create_time,
+                update_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="qrcodeId != null">
@@ -53,9 +51,6 @@
             <if test="tableId != null">
                 #{tableId,jdbcType=INTEGER},
             </if>
-            <if test="tableStatus != null">
-                #{tableStatus,jdbcType=INTEGER},
-            </if>
             now(),
             now()
         </trim>
@@ -63,25 +58,21 @@
     <update id="updateByPrimaryKeySelective" parameterType="org.ylgzs.info.pojo.QrCodeTable">
         update qrcode_table
         <set>
-            <if test="tableStatus != null">
-                table_status = #{tableStatus,jdbcType=INTEGER},
-            </if>
             <if test="createTime != null">
                 create_time = #{createTime,jdbcType=TIMESTAMP},
             </if>
-            now()
+                update_time = now()
         </set>
         where qrcode_id = #{qrcodeId,jdbcType=INTEGER}
         and table_id = #{tableId,jdbcType=INTEGER}
     </update>
     <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.QrCodeTable">
-    update qrcode_table
-    set table_status = #{tableStatus,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = now()
-    where qrcode_id = #{qrcodeId,jdbcType=INTEGER}
-      and table_id = #{tableId,jdbcType=INTEGER}
-  </update>
+        update qrcode_table
+        set create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = now()
+        where qrcode_id = #{qrcodeId,jdbcType=INTEGER}
+          and table_id = #{tableId,jdbcType=INTEGER}
+    </update>
 
     <select id="insertSelectiveBatch" resultType="int">
         insert into qrcode_table (qrcode_id, table_id, create_time, update_time)
@@ -91,15 +82,10 @@
         </foreach>
     </select>
 
-    <update id="updateStatus" parameterType="map">
-    update qrcode_table
-    set table_status = #{status},
-      update_time = now()
-    where table_id = #{tableId}
-  </update>
     <delete id="deleteByQrCodeId" parameterType="int">
-         delete from qrcode_table
-    where qrcode_id = #{qrcodeId,jdbcType=INTEGER}
+        delete
+        from qrcode_table
+        where qrcode_id = #{qrcodeId,jdbcType=INTEGER}
     </delete>
 
     <resultMap id="TableDTOResultMap" type="org.ylgzs.info.dto.RecordTableDetailDTO">
@@ -107,15 +93,13 @@
             <idArg column="table_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="table_info_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="collection_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
-            <arg column="table_status" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
         </constructor>
     </resultMap>
     <select id="selectByCodeId" resultMap="TableDTOResultMap" parameterType="int">
-        select qt.table_id,ti.table_info_name,ti.collection_name,qt.table_status,qt.update_time
+        select qt.table_id, ti.table_info_name, ti.collection_name, qt.update_time
         from qrcode_table as qt
-        join table_info as ti
-        on ti.table_info_id = qt.table_id
+                 join table_info as ti on ti.table_info_id = qt.table_id
         where qrcode_id = #{codeId}
     </select>
 
@@ -127,13 +111,4 @@
         </foreach>
     </delete>
 
-    <update id="updateStatusBatch">
-      update qrcode_table
-      set table_status = #{status},
-      update_time = now()
-      where table_id in
-      <foreach collection="list" separator="," open="(" close=")" item="item">
-          #{item}
-      </foreach>
-    </update>
 </mapper>

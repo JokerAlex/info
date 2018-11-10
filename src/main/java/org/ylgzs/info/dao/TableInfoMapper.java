@@ -28,4 +28,6 @@ public interface TableInfoMapper {
     List<TableInfo> listByTableInfoIds(List<Integer> list);
 
     int deleteByTableInfoIdBatch(List<Integer> list);
+
+    int updateStatusDel(List<Integer> list);
 }

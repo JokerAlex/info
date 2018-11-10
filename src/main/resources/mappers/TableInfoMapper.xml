@@ -10,14 +10,15 @@
             <arg column="table_info_description" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="table_info_query_col" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="table_info_pv" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="table_info_status" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="table_info_create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
             <arg column="table_info_update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
-    table_info_id, user_user_id, table_info_name, collection_name, table_info_description, 
-    table_info_query_col, table_info_pv, table_info_create_time, table_info_update_time
-  </sql>
+        table_info_id, user_user_id, table_info_name, collection_name, table_info_description,
+        table_info_query_col, table_info_pv, table_info_status, table_info_create_time, table_info_update_time
+    </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="org.ylgzs.info.pojo.TableInfoKey">
         select
         <include refid="Base_Column_List"/>
@@ -26,22 +27,34 @@
         and user_user_id = #{userUserId,jdbcType=INTEGER}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="org.ylgzs.info.pojo.TableInfoKey">
-    delete from table_info
-    where table_info_id = #{tableInfoId,jdbcType=INTEGER}
-      and user_user_id = #{userUserId,jdbcType=INTEGER}
-  </delete>
+        delete
+        from table_info
+        where table_info_id = #{tableInfoId,jdbcType=INTEGER}
+          and user_user_id = #{userUserId,jdbcType=INTEGER}
+    </delete>
     <insert id="insert" parameterType="org.ylgzs.info.pojo.TableInfo">
-    insert into table_info (table_info_id, user_user_id, table_info_name, 
-      collection_name, table_info_description,
-      table_info_query_col, table_info_pv, table_info_create_time, 
-      table_info_update_time)
-    values (#{tableInfoId,jdbcType=INTEGER}, #{userUserId,jdbcType=INTEGER}, #{tableInfoName,jdbcType=VARCHAR}, 
-      #{collectionName,jdbcType=VARCHAR}, #{tableInfoDescription,jdbcType=VARCHAR},
-      #{tableInfoQueryCol,jdbcType=VARCHAR}, #{tableInfoPv,jdbcType=INTEGER}, now(),
-      now())
-  </insert>
-    <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.TableInfo" useGeneratedKeys="true"
-            keyProperty="tableInfoId">
+        insert into table_info (table_info_id,
+                                user_user_id,
+                                table_info_name,
+                                collection_name,
+                                table_info_description,
+                                table_info_query_col,
+                                table_info_pv,
+                                table_info_status,
+                                table_info_create_time,
+                                table_info_update_time)
+        values (#{tableInfoId,jdbcType=INTEGER},
+                #{userUserId,jdbcType=INTEGER},
+                #{tableInfoName,jdbcType=VARCHAR},
+                #{collectionName,jdbcType=VARCHAR},
+                #{tableInfoDescription,jdbcType=VARCHAR},
+                #{tableInfoQueryCol,jdbcType=VARCHAR},
+                #{tableInfoPv,jdbcType=INTEGER},
+                #{tableInfoStatus,jdbcType=INTEGER},
+                now(),
+                now())
+    </insert>
+    <insert id="insertSelective" parameterType="org.ylgzs.info.pojo.TableInfo">
         insert into table_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="tableInfoId != null">
@@ -65,8 +78,13 @@
             <if test="tableInfoPv != null">
                 table_info_pv,
             </if>
-            table_info_create_time,
-            table_info_update_time
+            <if test="tableInfoStatus != null">
+                table_info_status,
+            </if>
+            <if test="tableInfoCreateTime != null">
+                table_info_create_time,
+            </if>
+                table_info_update_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tableInfoId != null">
@@ -90,7 +108,12 @@
             <if test="tableInfoPv != null">
                 #{tableInfoPv,jdbcType=INTEGER},
             </if>
-            now(),
+            <if test="tableInfoStatus != null">
+                #{tableInfoStatus,jdbcType=INTEGER},
+            </if>
+            <if test="tableInfoCreateTime != null">
+                #{tableInfoCreateTime,jdbcType=TIMESTAMP},
+            </if>
             now()
         </trim>
     </insert>
@@ -112,32 +135,37 @@
             <if test="tableInfoPv != null">
                 table_info_pv = #{tableInfoPv,jdbcType=INTEGER},
             </if>
+            <if test="tableInfoStatus != null">
+                table_info_status = #{tableInfoStatus,jdbcType=INTEGER},
+            </if>
             <if test="tableInfoCreateTime != null">
                 table_info_create_time = #{tableInfoCreateTime,jdbcType=TIMESTAMP},
             </if>
-            table_info_update_time = now()
+                table_info_update_time = now()
         </set>
         where table_info_id = #{tableInfoId,jdbcType=INTEGER}
         and user_user_id = #{userUserId,jdbcType=INTEGER}
     </update>
     <update id="updateByPrimaryKey" parameterType="org.ylgzs.info.pojo.TableInfo">
-    update table_info
-    set table_info_name = #{tableInfoName,jdbcType=VARCHAR},
-      collection_name = #{collectionName,jdbcType=VARCHAR},
-      table_info_description = #{tableInfoDescription,jdbcType=VARCHAR},
-      table_info_query_col = #{tableInfoQueryCol,jdbcType=VARCHAR},
-      table_info_pv = #{tableInfoPv,jdbcType=INTEGER},
-      table_info_create_time = #{tableInfoCreateTime,jdbcType=TIMESTAMP},
-      table_info_update_time = now()
-    where table_info_id = #{tableInfoId,jdbcType=INTEGER}
-      and user_user_id = #{userUserId,jdbcType=INTEGER}
-  </update>
+        update table_info
+        set table_info_name        = #{tableInfoName,jdbcType=VARCHAR},
+            collection_name        = #{collectionName,jdbcType=VARCHAR},
+            table_info_description = #{tableInfoDescription,jdbcType=VARCHAR},
+            table_info_query_col   = #{tableInfoQueryCol,jdbcType=VARCHAR},
+            table_info_pv          = #{tableInfoPv,jdbcType=INTEGER},
+            table_info_status      = #{tableInfoStatus,jdbcType=INTEGER},
+            table_info_create_time = #{tableInfoCreateTime,jdbcType=TIMESTAMP},
+            table_info_update_time = now()
+        where table_info_id = #{tableInfoId,jdbcType=INTEGER}
+          and user_user_id = #{userUserId,jdbcType=INTEGER}
+    </update>
 
     <select id="checkTableName" parameterType="map" resultType="int">
-    select count(1)
-    from table_info
-    where user_user_id = #{userId} and table_info_name = #{tableName}
-  </select>
+        select count(1)
+        from table_info
+        where user_user_id = #{userId}
+          and table_info_name = #{tableName}
+    </select>
 
     <select id="list" resultMap="BaseResultMap" parameterType="map">
         select
@@ -149,6 +177,7 @@
             <if test="userId != null">user_info.user_id = #{userId}</if>
             <if test="gradeId != null">user_info.grade_grade_id = #{gradeId}</if>
             <if test="departmentId != null">user_info.department_department_id = #{departmentId}</if>
+            <if test="1==1">table_info.table_info_status != 0</if>
         </where>
     </select>
 
@@ -169,4 +198,12 @@
             #{item}
         </foreach>
     </delete>
+    <update id="updateStatusDel" parameterType="list">
+        update table_info
+        set table_info_status = 0
+        where table_info_id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

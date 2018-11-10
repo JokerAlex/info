@@ -1,10 +1,7 @@
 package org.ylgzs.info.pojo;
 
-import lombok.ToString;
-
 import java.util.Date;
 
-@ToString
 public class TableInfo extends TableInfoKey {
     private String tableInfoName;
 
@@ -16,17 +13,20 @@ public class TableInfo extends TableInfoKey {
 
     private Integer tableInfoPv;
 
+    private Integer tableInfoStatus;
+
     private Date tableInfoCreateTime;
 
     private Date tableInfoUpdateTime;
 
-    public TableInfo(Integer tableInfoId, Integer userUserId, String tableInfoName, String collectionName, String tableInfoDescription, String tableInfoQueryCol, Integer tableInfoPv, Date tableInfoCreateTime, Date tableInfoUpdateTime) {
+    public TableInfo(Integer tableInfoId, Integer userUserId, String tableInfoName, String collectionName, String tableInfoDescription, String tableInfoQueryCol, Integer tableInfoPv, Integer tableInfoStatus, Date tableInfoCreateTime, Date tableInfoUpdateTime) {
         super(tableInfoId, userUserId);
         this.tableInfoName = tableInfoName;
         this.collectionName = collectionName;
         this.tableInfoDescription = tableInfoDescription;
         this.tableInfoQueryCol = tableInfoQueryCol;
         this.tableInfoPv = tableInfoPv;
+        this.tableInfoStatus = tableInfoStatus;
         this.tableInfoCreateTime = tableInfoCreateTime;
         this.tableInfoUpdateTime = tableInfoUpdateTime;
     }
@@ -73,6 +73,14 @@ public class TableInfo extends TableInfoKey {
 
     public void setTableInfoPv(Integer tableInfoPv) {
         this.tableInfoPv = tableInfoPv;
+    }
+
+    public Integer getTableInfoStatus() {
+        return tableInfoStatus;
+    }
+
+    public void setTableInfoStatus(Integer tableInfoStatus) {
+        this.tableInfoStatus = tableInfoStatus;
     }
 
     public Date getTableInfoCreateTime() {

@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.ylgzs.info.enums.ResultEnum;
 import org.ylgzs.info.exception.ParameterErrorException;
-import org.ylgzs.info.pojo.TableInfo;
-import org.ylgzs.info.pojo.TableInfoKey;
 import org.ylgzs.info.service.ITableService;
 import org.ylgzs.info.util.JwtUtil;
 import org.ylgzs.info.vo.ServerResponse;

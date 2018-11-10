@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.ylgzs.info.constant.QrCodeConst;
+import org.ylgzs.info.constant.Constants;
 import org.ylgzs.info.dao.QrCodeRecordMapper;
 import org.ylgzs.info.dao.QrCodeTableMapper;
 import org.ylgzs.info.dto.RecordTableDetailDTO;
@@ -85,7 +85,7 @@ public class QrCodeServiceImpl implements IQrCodeService {
         qrCodeRecord.setQrcodeRecordCode(code);
         qrCodeRecord.setQrcodeRecordName(qrName);
         qrCodeRecord.setQrcodeRecordDescription(description);
-        qrCodeRecord.setQrcodeRecordStatus(QrCodeConst.STATUS_ON);
+        qrCodeRecord.setQrcodeRecordStatus(Constants.STATUS_ON);
         //插入发布记录
         int qrCount = qrCodeRecordMapper.insertSelective(qrCodeRecord);
         log.info("【插入QrCodeRecode】qrCount = {}", qrCount);
@@ -124,7 +124,7 @@ public class QrCodeServiceImpl implements IQrCodeService {
         if (userId == null || recodeId == null || status == null) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
-        if (!QrCodeConst.STATUS_ON.equals(status) && !QrCodeConst.STATUS_OFF.equals(status)) {
+        if (!Constants.STATUS_ON.equals(status) && !Constants.STATUS_OFF.equals(status)) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
 
@@ -226,7 +226,6 @@ public class QrCodeServiceImpl implements IQrCodeService {
                     vo.setTableName(dto.getTableName());
                     vo.setCollectionName(dto.getCollectionName());
                     vo.setUpdateTime(DateTimeUtil.dateToStr(dto.getUpdateTime()));
-                    vo.setTableStatus(dto.getTableStatus());
                     return vo;
                 })
                 .collect(Collectors.toList());
@@ -258,7 +257,7 @@ public class QrCodeServiceImpl implements IQrCodeService {
         recordDetailVo.setQrcodeRecordCode(record.getQrcodeRecordCode());
         recordDetailVo.setDescription(record.getQrcodeRecordDescription());
         recordDetailVo.setQrcodeRecordStatus(record.getQrcodeRecordStatus());
-        if (recordDetailVo.getQrcodeRecordStatus().equals(QrCodeConst.STATUS_ON)) {
+        if (recordDetailVo.getQrcodeRecordStatus().equals(Constants.STATUS_ON)) {
             //获取所有表格 id、表名、插入时间、状态
             List<RecordTableDetailDTO> tableDetailDTOS = qrCodeTableMapper.selectByCodeId(record.getQrcodeRecordId());
             if (tableDetailDTOS == null) {
@@ -270,7 +269,6 @@ public class QrCodeServiceImpl implements IQrCodeService {
                         RecordTableVo vo = new RecordTableVo();
                         vo.setTableName(dto.getTableName());
                         vo.setCollectionName(dto.getCollectionName());
-                        vo.setTableStatus(dto.getTableStatus());
                         return vo;
                     })
                     .collect(Collectors.toList());

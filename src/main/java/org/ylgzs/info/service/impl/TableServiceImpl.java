@@ -10,12 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.ylgzs.info.constant.QrCodeConst;
+import org.ylgzs.info.constant.Constants;
 import org.ylgzs.info.dao.QrCodeTableMapper;
 import org.ylgzs.info.dao.TableInfoMapper;
 import org.ylgzs.info.dao.UserInfoMapper;
@@ -52,7 +51,7 @@ public class TableServiceImpl implements ITableService {
     private final TableInfoMapper tableInfoMapper;
     private final UserInfoMapper userInfoMapper;
     private final QrCodeTableMapper qrCodeTableMapper;
-    private final static String isNullStr = "null";
+    private final static String IS_NULL_STR = "null";
 
     @Autowired
     public TableServiceImpl(MongoTemplate mongoTemplate, TableInfoMapper tableInfoMapper, UserInfoMapper userInfoMapper, QrCodeTableMapper qrCodeTableMapper) {
@@ -155,21 +154,17 @@ public class TableServiceImpl implements ITableService {
         if (tableInfoId == null || userId == null) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
-        //删除mongoDB里的表
-        log.info("【删除表格】userId = {}, tableInfoId = {}", userId, tableInfoId);
-        TableInfoKey tableInfoKey = new TableInfoKey(tableInfoId, userId);
-        TableInfo tableInfo = tableInfoMapper.selectByPrimaryKey(tableInfoKey);
-        mongoTemplate.dropCollection(tableInfo.getCollectionName());
-        //删除表信息
-        int count = tableInfoMapper.deleteByPrimaryKey(tableInfoKey);
-        //TODO 修改删除方式
-        int codeCount = qrCodeTableMapper.updateStatus(tableInfoId, QrCodeConst.STATUS_OFF);
-        log.info("【删除表格】count = {}, codeCount = {}", count, codeCount);
+        TableInfo tableInfo = new TableInfo();
+        tableInfo.setTableInfoId(tableInfoId);
+        tableInfo.setUserUserId(userId);
+        tableInfo.setTableInfoStatus(Constants.STATUS_OFF);
+        //逻辑删除
+        int count = tableInfoMapper.updateByPrimaryKeySelective(tableInfo);
+        log.info("[delTableInfo] tableInfoId : {}, userId : {}, count : {}", tableInfoId, userId, count);
         if (count > 0) {
             return ServerResponse.isSuccess();
         }
         throw new TableException(TableEnum.DEL_TABLE_INFO_ERROR.getMessage());
-
     }
 
     @Override
@@ -178,17 +173,9 @@ public class TableServiceImpl implements ITableService {
         if (tableInfoIds.isEmpty()) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
-        log.info("【删除表格】tableInfoIds = {}", tableInfoIds.toString());
-        List<String> collectionNames = tableInfoMapper.listByTableInfoIds(tableInfoIds).stream()
-                .map(TableInfo::getCollectionName)
-                .collect(Collectors.toList());
-        //删除mongoDB里的表
-        //TODO 删除方式优化
-        collectionNames.forEach(mongoTemplate::dropCollection);
-        int tableCount = tableInfoMapper.deleteByTableInfoIdBatch(tableInfoIds);
-        int codeCount = qrCodeTableMapper.updateStatusBatch(tableInfoIds, QrCodeConst.STATUS_OFF);
-        log.info("【删除表格】tableCount = {}, codeCount = {}", tableCount, codeCount);
-        if (tableCount > 0) {
+        int count  = tableInfoMapper.updateStatusDel(tableInfoIds);
+        log.info("[delTableInfoBatch] tableInfoIds : {}, count : {}", tableInfoIds.toString(), count);
+        if (count == tableInfoIds.size()) {
             return ServerResponse.isSuccess();
         }
         throw new TableException(TableEnum.DEL_TABLE_INFO_ERROR.getMessage());
@@ -240,11 +227,11 @@ public class TableServiceImpl implements ITableService {
 
     @Override
     public ServerResponse find(String collectionName, String field1, String value1, String field2, String value2) throws NotFoundException {
-        if (isNullStr.equals(collectionName) || isNullStr.equals(field1)) {
+        if (IS_NULL_STR.equals(collectionName) || IS_NULL_STR.equals(field1)) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         Query query = new Query(Criteria.where(field1).is(value1));
-        if (!isNullStr.equals(field2)) {
+        if (!IS_NULL_STR.equals(field2)) {
             query.addCriteria(Criteria.where(field2).is(value2));
         }
         Object object = mongoTemplate.findOne(query, Object.class, collectionName);

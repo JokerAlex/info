@@ -10,10 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.ylgzs.info.constant.UserConst;
+import org.ylgzs.info.constant.Constants;
 import org.ylgzs.info.dao.UserInfoMapper;
 import org.ylgzs.info.enums.ResultEnum;
 import org.ylgzs.info.enums.UserEnum;
+import org.ylgzs.info.exception.GeneralException;
 import org.ylgzs.info.exception.NotFoundException;
 import org.ylgzs.info.exception.ParameterErrorException;
 import org.ylgzs.info.pojo.UserInfo;
@@ -49,12 +50,12 @@ public class UserServiceImpl implements IUserService {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
         }
         //判断检查类型，登录名、邮箱
-        if (UserConst.USER_LOGIN_NAME.equals(type)) {
+        if (Constants.USER_LOGIN_NAME.equals(type)) {
             int count = userInfoMapper.checkUserLoginName(str);
             if (count > 0) {
                 return ServerResponse.isError(UserEnum.INVALID_USER_LOGIN_NAME.getMessage());
             }
-        } else if (UserConst.EMAIL.equals(type)) {
+        } else if (Constants.EMAIL.equals(type)) {
             int count = userInfoMapper.checkEmail(str);
             if (count > 0) {
                 return ServerResponse.isError(UserEnum.INVALID_EMAIL.getMessage());
@@ -66,7 +67,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = GeneralException.class)
     public ServerResponse<String> register(UserInfo userInfo) {
 
 
@@ -75,12 +76,12 @@ public class UserServiceImpl implements IUserService {
         }
         log.info("userInfo = {}", userInfo.toString());
         //检查用户名是否可用
-        ServerResponse<String> validResponse = this.checkValid(userInfo.getUserLoginName(), UserConst.USER_LOGIN_NAME);
+        ServerResponse<String> validResponse = this.checkValid(userInfo.getUserLoginName(), Constants.USER_LOGIN_NAME);
         if (!validResponse.isOk()) {
             return validResponse;
         }
         //检查邮箱是否可用
-        validResponse = this.checkValid(userInfo.getUserEmail(), UserConst.EMAIL);
+        validResponse = this.checkValid(userInfo.getUserEmail(), Constants.EMAIL);
         if (!validResponse.isOk()) {
             return validResponse;
         }
@@ -97,11 +98,11 @@ public class UserServiceImpl implements IUserService {
         if (count > 0) {
             return ServerResponse.isSuccess();
         }
-        return ServerResponse.isError(UserEnum.REGISTRATION_FAILED.getMessage());
+        throw new GeneralException(UserEnum.REGISTRATION_FAILED.getMessage());
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = GeneralException.class)
     public ServerResponse<UserInfoVo> updateInformation(UserInfo userInfo) {
         if (userInfo == null) {
             throw new ParameterErrorException(ResultEnum.ILLEGAL_PARAMETER.getMessage());
@@ -123,16 +124,15 @@ public class UserServiceImpl implements IUserService {
             }
             return ServerResponse.isError(UserEnum.UPDATE_FAILED.getMessage());
         }
-        return ServerResponse.isError(UserEnum.INVALID_EMAIL.getMessage());
+        throw new GeneralException(UserEnum.INVALID_EMAIL.getMessage());
     }
 
     @Override
+    @Transactional(rollbackFor = GeneralException.class)
     public ServerResponse<String> resetPassword(String oldPass, String newPass, Integer userId) {
         //校验旧密码
-        //TODO 密码加密
-        log.info("【oldPass】= {}",passwordEncoder.encode(oldPass));
-        int oldCount = userInfoMapper.checkPassword(passwordEncoder.encode(oldPass), userId);
-        if (oldCount == 0) {
+        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(userId);
+        if (!passwordEncoder.matches(oldPass, userInfo.getUserPassword())) {
             return ServerResponse.isError(UserEnum.OLD_PASS_WRONG.getMessage());
         }
         if (oldPass.equals(newPass)) {
@@ -145,7 +145,7 @@ public class UserServiceImpl implements IUserService {
         if (update > 0) {
             return ServerResponse.isSuccess();
         }
-        return ServerResponse.isError(UserEnum.UPDATE_PASSWORD_FAILED.getMessage());
+        throw new GeneralException(UserEnum.UPDATE_PASSWORD_FAILED.getMessage());
 
     }
 
