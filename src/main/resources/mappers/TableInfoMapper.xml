@@ -206,4 +206,11 @@
             #{item}
         </foreach>
     </update>
+
+    <select id="listDeleteItems" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from table_info
+        where table_info_status = 0;
+    </select>
 </mapper>

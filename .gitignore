@@ -44,4 +44,5 @@ Thumbs.db
 mvnw
 mvnw.cmd
 
-application.yml
+application-dev.yml
+application-prod.yml

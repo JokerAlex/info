@@ -1,20 +1,11 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/info?characterEncoding=utf8&useSSL=false
-    username: root
-    password: 1234567890
-  data:
-    mongodb:
-      uri: mongodb://infoadmin:root@localhost:27017/info
+  profiles:
+    active: dev
   servlet:
     multipart:
       max-request-size: 10Mb
       max-file-size: 2Mb
 
-server:
-  servlet:
-    context-path: /api
 
 
 # mybatis 配置
@@ -38,4 +29,3 @@ jwt:
   secretKey: ylgzs_info
   expiration: 604800
   tokenHead: "Bearer "
-

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <configuration>
+    <springProperty scope="context" name="logPath" source="info.files.path" defaultValue="logs"/>
+    <property name="LOG_HOME" value="${logPath}"/>
 
     <!--控制台日志输出-->
     <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>
-                %d - %p - %t -%msg%n
+                %date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread]-[%logger{36}] --> %msg%n
             </pattern>
         </layout>
     </appender>
@@ -19,13 +21,17 @@
         </filter>
         <encoder>
             <pattern>
-                %msg%n
+                %date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread]-[%logger{36}] --> %msg%n
             </pattern>
         </encoder>
         <!--滚动策略-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>/Users/alex/program/IdeaProjects/log/tomcat/info/info.%d.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/log/manager/info/info.%d.log</fileNamePattern>
+            <!--保留最近30天的日志-->
+            <maxHistory>30</maxHistory>
+            <!--日志文件大小上限-->
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -36,13 +42,17 @@
         </filter>
         <encoder>
             <pattern>
-                %msg%n
+                %date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread]-[%logger{36}] --> %msg%n
             </pattern>
         </encoder>
         <!--滚动策略-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>/Users/alex/program/IdeaProjects/log/tomcat/info/error.%d.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/log/manager/error/error.%d.log</fileNamePattern>
+            <!--保留最近30天的日志-->
+            <maxHistory>30</maxHistory>
+            <!--日志文件大小上限-->
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
     </appender>
 

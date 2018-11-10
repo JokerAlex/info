@@ -50,15 +50,13 @@ public class TableServiceImpl implements ITableService {
     private final MongoTemplate mongoTemplate;
     private final TableInfoMapper tableInfoMapper;
     private final UserInfoMapper userInfoMapper;
-    private final QrCodeTableMapper qrCodeTableMapper;
     private final static String IS_NULL_STR = "null";
 
     @Autowired
-    public TableServiceImpl(MongoTemplate mongoTemplate, TableInfoMapper tableInfoMapper, UserInfoMapper userInfoMapper, QrCodeTableMapper qrCodeTableMapper) {
+    public TableServiceImpl(MongoTemplate mongoTemplate, TableInfoMapper tableInfoMapper, UserInfoMapper userInfoMapper) {
         this.mongoTemplate = mongoTemplate;
         this.tableInfoMapper = tableInfoMapper;
         this.userInfoMapper = userInfoMapper;
-        this.qrCodeTableMapper = qrCodeTableMapper;
     }
 
     @Override

@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 
@@ -15,12 +17,11 @@ import java.util.*;
  * @Author alex
  * @Date 2018/10/14
  **/
-@ConfigurationProperties(prefix = "pass")
 public class JwtUtil {
 
     private static String HEADER = "Authorization";
     private static String TOKEN_HEAD = "Bearer ";
-    private static Long EXPIRATION = 604800L;
+    private static Long EXPIRATION = 30L;
     private static SecretKey KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     /**
@@ -39,7 +40,9 @@ public class JwtUtil {
      * @return
      */
     public static String createJwt(Map<String, Object> claims, Long expiration) {
-        Date expire = new Date(System.currentTimeMillis() + expiration * 1000);
+        LocalDateTime time = LocalDateTime.now().plusMinutes(expiration);
+
+        Date expire = Date.from(time.atZone(ZoneId.systemDefault()).toInstant());
 
         JwtBuilder builder = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -84,12 +87,5 @@ public class JwtUtil {
             }
         }
         return userId;
-    }
-
-    public static void main(String[] args) {
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("name", "zzz");
-        map.put("id", "123");
-        System.out.println(createJwt(map));
     }
 }
